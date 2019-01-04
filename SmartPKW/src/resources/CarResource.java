@@ -13,6 +13,6 @@ public class CarResource {
 	@Produces(MediaType.TEXT_PLAIN)
 	public String getCar()
 	{
-		return "Hello World!";
+		return "Hello Worlkkd!";
 	}
 }
