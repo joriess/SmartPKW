@@ -7,7 +7,7 @@ public class Driver {
 		String url = "jdbc:mysql://localhost:3306/SmartPKW";
 		String username = "root";
 		String password = "";
-		System.out.println("lol");
+		System.out.println("Database started");
 		try {
 			// 1. Get a connection to Databaase
 			Connection myConn = DriverManager.getConnection(url, username, password);
