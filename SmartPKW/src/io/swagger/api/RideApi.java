@@ -7,7 +7,6 @@ import io.swagger.api.factories.RideApiServiceFactory;
 import io.swagger.annotations.ApiParam;
 import io.swagger.jaxrs.*;
 
-import java.util.Date;
 import java.util.List;
 import io.swagger.model.RideWithId;
 import io.swagger.model.RideWithoutId;
@@ -34,7 +33,7 @@ import javax.validation.constraints.*;
 @Consumes({ "application/json" })
 @Produces({ "application/json" })
 @io.swagger.annotations.Api(description = "the ride API")
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2019-01-05T15:11:31.517Z")
+@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2019-01-09T18:17:56.749Z")
 public class RideApi  {
    private final RideApiService delegate;
 
@@ -63,22 +62,48 @@ public class RideApi  {
     
     @Consumes({ "application/json" })
     @Produces({ "application/json" })
-    @io.swagger.annotations.ApiOperation(value = "Create a new ride", notes = "", response = Void.class, authorizations = {
+    @io.swagger.annotations.ApiOperation(value = "Create a new ride", notes = "", response = RideWithId.class, authorizations = {
         @io.swagger.annotations.Authorization(value = "accessCode", scopes = {
-            @io.swagger.annotations.AuthorizationScope(scope = "read", description = "allows reading resources"),
-            @io.swagger.annotations.AuthorizationScope(scope = "write", description = "allows modifying resources")
+            @io.swagger.annotations.AuthorizationScope(scope = "read:profile", description = "allows reading profile")
         })
     }, tags={ "ride", })
     @io.swagger.annotations.ApiResponses(value = { 
-        @io.swagger.annotations.ApiResponse(code = 201, message = "ride created successfully", response = Void.class),
+        @io.swagger.annotations.ApiResponse(code = 201, message = "ride created successfully", response = RideWithId.class),
+        
+        @io.swagger.annotations.ApiResponse(code = 400, message = "bad request", response = Void.class),
+        
+        @io.swagger.annotations.ApiResponse(code = 401, message = "unauthorized, because you are not logged in", response = Void.class),
+        
+        @io.swagger.annotations.ApiResponse(code = 406, message = "wrong format (only JSON is allowed)", response = Void.class),
+        
+        @io.swagger.annotations.ApiResponse(code = 413, message = "request entity too long", response = Void.class),
+        
+        @io.swagger.annotations.ApiResponse(code = 500, message = "internal server error", response = Void.class),
+        
+        @io.swagger.annotations.ApiResponse(code = 503, message = "service or depending services unavailable", response = Void.class) })
+    public Response createRide(@ApiParam(value = "The name of the user whichs cars needs to be fetched.",required=true) @PathParam("rideId") Integer rideId
+,@ApiParam(value = "Creates a ride-object with at least two stops. Can only be used by a client, who already created two or more stops for this ride-object." ,required=true) RideWithoutId body
+,@Context SecurityContext securityContext)
+    throws NotFoundException {
+        return delegate.createRide(rideId,body,securityContext);
+    }
+    @POST
+    @Path("/{rideId}/stop/")
+    @Consumes({ "application/json" })
+    @Produces({ "application/json" })
+    @io.swagger.annotations.ApiOperation(value = "create stop", notes = "", response = StopWithId.class, responseContainer = "List", authorizations = {
+        @io.swagger.annotations.Authorization(value = "accessCode", scopes = {
+            @io.swagger.annotations.AuthorizationScope(scope = "read:profile", description = "allows reading profile")
+        })
+    }, tags={ "stop", })
+    @io.swagger.annotations.ApiResponses(value = { 
+        @io.swagger.annotations.ApiResponse(code = 201, message = "stop(s) created", response = StopWithId.class, responseContainer = "List"),
         
         @io.swagger.annotations.ApiResponse(code = 400, message = "bad request", response = Void.class),
         
         @io.swagger.annotations.ApiResponse(code = 401, message = "unauthorized, because you are not logged in", response = Void.class),
         
         @io.swagger.annotations.ApiResponse(code = 403, message = "forbidden", response = Void.class),
-        
-        @io.swagger.annotations.ApiResponse(code = 405, message = "not allowed HTTP-Method", response = Void.class),
         
         @io.swagger.annotations.ApiResponse(code = 406, message = "wrong format (only JSON is allowed)", response = Void.class),
         
@@ -89,10 +114,12 @@ public class RideApi  {
         @io.swagger.annotations.ApiResponse(code = 500, message = "internal server error", response = Void.class),
         
         @io.swagger.annotations.ApiResponse(code = 503, message = "service or depending services unavailable", response = Void.class) })
-    public Response createRide(@ApiParam(value = "Creates a ride-object with at least two stops. Can only be used by a client, who already created two or more stops for this ride-object." ,required=true) RideWithoutId body
+    public Response createStops(@ApiParam(value = "create one or multiple stops" ,required=true) List<StopWithoutId> body
+,@ApiParam(value = "rideId",required=true) @PathParam("rideId") Integer rideId
+,@ApiParam(value = "userId",required=true) @PathParam("userId") Long userId
 ,@Context SecurityContext securityContext)
     throws NotFoundException {
-        return delegate.createRide(body,securityContext);
+        return delegate.createStops(body,rideId,userId,securityContext);
     }
     @DELETE
     @Path("/{rideId}")
@@ -100,8 +127,7 @@ public class RideApi  {
     @Produces({ "application/json" })
     @io.swagger.annotations.ApiOperation(value = "Deletes a ride", notes = "", response = Void.class, authorizations = {
         @io.swagger.annotations.Authorization(value = "accessCode", scopes = {
-            @io.swagger.annotations.AuthorizationScope(scope = "read", description = "allows reading resources"),
-            @io.swagger.annotations.AuthorizationScope(scope = "write", description = "allows modifying resources")
+            @io.swagger.annotations.AuthorizationScope(scope = "read:profile", description = "allows reading profile")
         })
     }, tags={ "ride", })
     @io.swagger.annotations.ApiResponses(value = { 
@@ -114,8 +140,6 @@ public class RideApi  {
         @io.swagger.annotations.ApiResponse(code = 403, message = "forbidden", response = Void.class),
         
         @io.swagger.annotations.ApiResponse(code = 404, message = "ride not found", response = Void.class),
-        
-        @io.swagger.annotations.ApiResponse(code = 405, message = "not allowed HTTP-Method", response = Void.class),
         
         @io.swagger.annotations.ApiResponse(code = 406, message = "wrong format (only JSON is allowed)", response = Void.class),
         
@@ -135,8 +159,7 @@ public class RideApi  {
     @Produces({ "application/json" })
     @io.swagger.annotations.ApiOperation(value = "Delete all stops which are associated to a userId and rideId.", notes = "", response = Void.class, authorizations = {
         @io.swagger.annotations.Authorization(value = "accessCode", scopes = {
-            @io.swagger.annotations.AuthorizationScope(scope = "read", description = "allows reading resources"),
-            @io.swagger.annotations.AuthorizationScope(scope = "write", description = "allows modifying resources")
+            @io.swagger.annotations.AuthorizationScope(scope = "read:profile", description = "allows reading profile")
         })
     }, tags={ "stop", })
     @io.swagger.annotations.ApiResponses(value = { 
@@ -148,9 +171,7 @@ public class RideApi  {
         
         @io.swagger.annotations.ApiResponse(code = 403, message = "forbidden", response = Void.class),
         
-        @io.swagger.annotations.ApiResponse(code = 404, message = "stop not found", response = Void.class),
-        
-        @io.swagger.annotations.ApiResponse(code = 405, message = "not allowed HTTP-Method", response = Void.class),
+        @io.swagger.annotations.ApiResponse(code = 404, message = "stop or user not found", response = Void.class),
         
         @io.swagger.annotations.ApiResponse(code = 406, message = "wrong format (only JSON is allowed)", response = Void.class),
         
@@ -159,77 +180,11 @@ public class RideApi  {
         @io.swagger.annotations.ApiResponse(code = 500, message = "internal server error", response = Void.class),
         
         @io.swagger.annotations.ApiResponse(code = 503, message = "service or depending services unavailable", response = Void.class) })
-    public Response deleteStops(@ApiParam(value = "All stops of the given userId will be deleted.",required=true) @PathParam("userId") Long userId
+    public Response deleteStops(@ApiParam(value = "All stops of the given userId will be deleted if nobody is using them to join or exit the ride.",required=true) @PathParam("userId") Long userId
 ,@ApiParam(value = "ID of the ride that needs to be fetched",required=true) @PathParam("rideId") Integer rideId
 ,@Context SecurityContext securityContext)
     throws NotFoundException {
         return delegate.deleteStops(userId,rideId,securityContext);
-    }
-    @GET
-    @Path("/findByTimeFrame")
-    @Consumes({ "application/json" })
-    @Produces({ "application/json" })
-    @io.swagger.annotations.ApiOperation(value = "Finds existing rides by searching for it with custom parameters", notes = "filter for begin and end of a time frame with two strings", response = RideWithId.class, responseContainer = "List", authorizations = {
-        @io.swagger.annotations.Authorization(value = "accessCode", scopes = {
-            @io.swagger.annotations.AuthorizationScope(scope = "read", description = "allows reading resources"),
-            @io.swagger.annotations.AuthorizationScope(scope = "write", description = "allows modifying resources")
-        })
-    }, tags={ "ride", })
-    @io.swagger.annotations.ApiResponses(value = { 
-        @io.swagger.annotations.ApiResponse(code = 200, message = "OK", response = RideWithId.class, responseContainer = "List"),
-        
-        @io.swagger.annotations.ApiResponse(code = 400, message = "bad request", response = Void.class),
-        
-        @io.swagger.annotations.ApiResponse(code = 404, message = "no rides found", response = Void.class),
-        
-        @io.swagger.annotations.ApiResponse(code = 405, message = "not allowed HTTP-Method", response = Void.class),
-        
-        @io.swagger.annotations.ApiResponse(code = 406, message = "wrong format (only JSON is allowed)", response = Void.class),
-        
-        @io.swagger.annotations.ApiResponse(code = 409, message = "edit conflict between request- and server-version", response = Void.class),
-        
-        @io.swagger.annotations.ApiResponse(code = 413, message = "request entity too long", response = Void.class),
-        
-        @io.swagger.annotations.ApiResponse(code = 500, message = "internal server error", response = Void.class),
-        
-        @io.swagger.annotations.ApiResponse(code = 503, message = "service or depending services unavailable", response = Void.class) })
-    public Response findByTimeFrame(@ApiParam(value = "filter for begin and end of a time frame",required=true) @QueryParam("timeframe") List<Date> timeframe
-,@Context SecurityContext securityContext)
-    throws NotFoundException {
-        return delegate.findByTimeFrame(timeframe,securityContext);
-    }
-    @GET
-    @Path("/findNearbyRides")
-    @Consumes({ "application/json" })
-    @Produces({ "application/json" })
-    @io.swagger.annotations.ApiOperation(value = "Finds nearby rides", notes = "searches for nerby rides", response = RideWithId.class, responseContainer = "List", authorizations = {
-        @io.swagger.annotations.Authorization(value = "accessCode", scopes = {
-            @io.swagger.annotations.AuthorizationScope(scope = "read", description = "allows reading resources"),
-            @io.swagger.annotations.AuthorizationScope(scope = "write", description = "allows modifying resources")
-        })
-    }, tags={ "ride", })
-    @io.swagger.annotations.ApiResponses(value = { 
-        @io.swagger.annotations.ApiResponse(code = 200, message = "OK", response = RideWithId.class, responseContainer = "List"),
-        
-        @io.swagger.annotations.ApiResponse(code = 400, message = "bad request", response = Void.class),
-        
-        @io.swagger.annotations.ApiResponse(code = 404, message = "no rides found", response = Void.class),
-        
-        @io.swagger.annotations.ApiResponse(code = 405, message = "not allowed HTTP-Method", response = Void.class),
-        
-        @io.swagger.annotations.ApiResponse(code = 406, message = "wrong format (only JSON is allowed)", response = Void.class),
-        
-        @io.swagger.annotations.ApiResponse(code = 409, message = "edit conflict between request- and server-version", response = Void.class),
-        
-        @io.swagger.annotations.ApiResponse(code = 413, message = "request entity too long", response = Void.class),
-        
-        @io.swagger.annotations.ApiResponse(code = 500, message = "internal server error", response = Void.class),
-        
-        @io.swagger.annotations.ApiResponse(code = 503, message = "service or depending services unavailable", response = Void.class) })
-    public Response findNearbyRides(@ApiParam(value = "address of type string",required=true) @QueryParam("address") String address
-,@Context SecurityContext securityContext)
-    throws NotFoundException {
-        return delegate.findNearbyRides(address,securityContext);
     }
     @GET
     @Path("/{rideId}")
@@ -237,8 +192,7 @@ public class RideApi  {
     @Produces({ "application/json" })
     @io.swagger.annotations.ApiOperation(value = "Find ride by ID", notes = "Returns a single ride", response = RideWithId.class, authorizations = {
         @io.swagger.annotations.Authorization(value = "accessCode", scopes = {
-            @io.swagger.annotations.AuthorizationScope(scope = "read", description = "allows reading resources"),
-            @io.swagger.annotations.AuthorizationScope(scope = "write", description = "allows modifying resources")
+            @io.swagger.annotations.AuthorizationScope(scope = "read:profile", description = "allows reading profile")
         })
     }, tags={ "ride", })
     @io.swagger.annotations.ApiResponses(value = { 
@@ -247,8 +201,6 @@ public class RideApi  {
         @io.swagger.annotations.ApiResponse(code = 400, message = "bad request", response = Void.class),
         
         @io.swagger.annotations.ApiResponse(code = 404, message = "ride not found", response = Void.class),
-        
-        @io.swagger.annotations.ApiResponse(code = 405, message = "not allowed HTTP-Method", response = Void.class),
         
         @io.swagger.annotations.ApiResponse(code = 406, message = "wrong format (only JSON is allowed)", response = Void.class),
         
@@ -270,8 +222,7 @@ public class RideApi  {
     @Produces({ "application/json" })
     @io.swagger.annotations.ApiOperation(value = "Returns all stops of a ride", notes = "Returns stops of a ride", response = StopWithId.class, responseContainer = "List", authorizations = {
         @io.swagger.annotations.Authorization(value = "accessCode", scopes = {
-            @io.swagger.annotations.AuthorizationScope(scope = "read", description = "allows reading resources"),
-            @io.swagger.annotations.AuthorizationScope(scope = "write", description = "allows modifying resources")
+            @io.swagger.annotations.AuthorizationScope(scope = "read:profile", description = "allows reading profile")
         })
     }, tags={ "stop", })
     @io.swagger.annotations.ApiResponses(value = { 
@@ -280,8 +231,6 @@ public class RideApi  {
         @io.swagger.annotations.ApiResponse(code = 400, message = "bad request", response = Void.class),
         
         @io.swagger.annotations.ApiResponse(code = 404, message = "stop not found", response = Void.class),
-        
-        @io.swagger.annotations.ApiResponse(code = 405, message = "not allowed HTTP-Method", response = Void.class),
         
         @io.swagger.annotations.ApiResponse(code = 406, message = "wrong format (only JSON is allowed)", response = Void.class),
         
@@ -303,8 +252,7 @@ public class RideApi  {
     @Produces({ "application/json" })
     @io.swagger.annotations.ApiOperation(value = "Returns all stops of a ride which are associated to a user", notes = "Returns stops of a ride and a user as a Json-List", response = StopWithId.class, responseContainer = "List", authorizations = {
         @io.swagger.annotations.Authorization(value = "accessCode", scopes = {
-            @io.swagger.annotations.AuthorizationScope(scope = "read", description = "allows reading resources"),
-            @io.swagger.annotations.AuthorizationScope(scope = "write", description = "allows modifying resources")
+            @io.swagger.annotations.AuthorizationScope(scope = "read:profile", description = "allows reading profile")
         })
     }, tags={ "stop", })
     @io.swagger.annotations.ApiResponses(value = { 
@@ -313,8 +261,6 @@ public class RideApi  {
         @io.swagger.annotations.ApiResponse(code = 400, message = "bad request", response = Void.class),
         
         @io.swagger.annotations.ApiResponse(code = 404, message = "stop not found", response = Void.class),
-        
-        @io.swagger.annotations.ApiResponse(code = 405, message = "not allowed HTTP-Method", response = Void.class),
         
         @io.swagger.annotations.ApiResponse(code = 406, message = "wrong format (only JSON is allowed)", response = Void.class),
         
@@ -331,28 +277,21 @@ public class RideApi  {
     throws NotFoundException {
         return delegate.getStopsByRideIdAndUserId(rideId,userId,securityContext);
     }
-    @PUT
-    
+    @GET
+    @Path("/searchRides")
     @Consumes({ "application/json" })
     @Produces({ "application/json" })
-    @io.swagger.annotations.ApiOperation(value = "Update an existing ride", notes = "", response = Void.class, authorizations = {
+    @io.swagger.annotations.ApiOperation(value = "Finds existing rides by searching for it with custom parameters", notes = "filter for begin and end of a time frame with two strings", response = RideWithId.class, responseContainer = "List", authorizations = {
         @io.swagger.annotations.Authorization(value = "accessCode", scopes = {
-            @io.swagger.annotations.AuthorizationScope(scope = "read", description = "allows reading resources"),
-            @io.swagger.annotations.AuthorizationScope(scope = "write", description = "allows modifying resources")
+            @io.swagger.annotations.AuthorizationScope(scope = "read:profile", description = "allows reading profile")
         })
     }, tags={ "ride", })
     @io.swagger.annotations.ApiResponses(value = { 
-        @io.swagger.annotations.ApiResponse(code = 200, message = "ride updated", response = Void.class),
+        @io.swagger.annotations.ApiResponse(code = 200, message = "OK", response = RideWithId.class, responseContainer = "List"),
         
         @io.swagger.annotations.ApiResponse(code = 400, message = "bad request", response = Void.class),
         
-        @io.swagger.annotations.ApiResponse(code = 401, message = "unauthorized, because you are not logged in", response = Void.class),
-        
-        @io.swagger.annotations.ApiResponse(code = 403, message = "forbidden", response = Void.class),
-        
-        @io.swagger.annotations.ApiResponse(code = 404, message = "ride not found", response = Void.class),
-        
-        @io.swagger.annotations.ApiResponse(code = 405, message = "not allowed HTTP-Method", response = Void.class),
+        @io.swagger.annotations.ApiResponse(code = 404, message = "no rides found", response = Void.class),
         
         @io.swagger.annotations.ApiResponse(code = 406, message = "wrong format (only JSON is allowed)", response = Void.class),
         
@@ -363,23 +302,59 @@ public class RideApi  {
         @io.swagger.annotations.ApiResponse(code = 500, message = "internal server error", response = Void.class),
         
         @io.swagger.annotations.ApiResponse(code = 503, message = "service or depending services unavailable", response = Void.class) })
-    public Response updateRide(@ApiParam(value = "Update an existing ride by replacing it with a new ride." ,required=true) RideWithId body
+    public Response searchRides(@ApiParam(value = "The time until which rides are searched.") @QueryParam("ToAddress") String toAddress
+,@ApiParam(value = "The time from which rides are searched.") @QueryParam("fromTimestamp") String fromTimestamp
+,@ApiParam(value = "address of type string") @QueryParam("toTimestamp") String toTimestamp
 ,@Context SecurityContext securityContext)
     throws NotFoundException {
-        return delegate.updateRide(body,securityContext);
+        return delegate.searchRides(toAddress,fromTimestamp,toTimestamp,securityContext);
+    }
+    @PUT
+    @Path("/{rideId}")
+    @Consumes({ "application/json" })
+    @Produces({ "application/json" })
+    @io.swagger.annotations.ApiOperation(value = "Update an existing ride", notes = "", response = RideWithId.class, authorizations = {
+        @io.swagger.annotations.Authorization(value = "accessCode", scopes = {
+            @io.swagger.annotations.AuthorizationScope(scope = "read:profile", description = "allows reading profile")
+        })
+    }, tags={ "ride", })
+    @io.swagger.annotations.ApiResponses(value = { 
+        @io.swagger.annotations.ApiResponse(code = 200, message = "ride updated", response = RideWithId.class),
+        
+        @io.swagger.annotations.ApiResponse(code = 400, message = "bad request", response = Void.class),
+        
+        @io.swagger.annotations.ApiResponse(code = 401, message = "unauthorized, because you are not logged in", response = Void.class),
+        
+        @io.swagger.annotations.ApiResponse(code = 403, message = "forbidden", response = Void.class),
+        
+        @io.swagger.annotations.ApiResponse(code = 404, message = "ride not found", response = Void.class),
+        
+        @io.swagger.annotations.ApiResponse(code = 406, message = "wrong format (only JSON is allowed)", response = Void.class),
+        
+        @io.swagger.annotations.ApiResponse(code = 409, message = "edit conflict between request- and server-version", response = Void.class),
+        
+        @io.swagger.annotations.ApiResponse(code = 413, message = "request entity too long", response = Void.class),
+        
+        @io.swagger.annotations.ApiResponse(code = 500, message = "internal server error", response = Void.class),
+        
+        @io.swagger.annotations.ApiResponse(code = 503, message = "service or depending services unavailable", response = Void.class) })
+    public Response updateRide(@ApiParam(value = "The id of the user whichs cars needs to be fetched.",required=true) @PathParam("rideId") Integer rideId
+,@ApiParam(value = "Update an existing ride by replacing it with a new ride." ,required=true) RideWithoutId body
+,@Context SecurityContext securityContext)
+    throws NotFoundException {
+        return delegate.updateRide(rideId,body,securityContext);
     }
     @PUT
     @Path("/{rideId}/stop/{userId}")
     @Consumes({ "application/json" })
     @Produces({ "application/json" })
-    @io.swagger.annotations.ApiOperation(value = "update all stops (one or two) of a specific user by this user.", notes = "", response = Void.class, authorizations = {
+    @io.swagger.annotations.ApiOperation(value = "update 1 or 2 stop(s) of a specific user.", notes = "The main usecases are accepting or declining one or two stops by a passenger and sign up or sign off from one or two stop(s). All this operations require a rideId and a userId. A general method to update all stops has no application cases and is therefore not implemented.", response = StopWithId.class, responseContainer = "List", authorizations = {
         @io.swagger.annotations.Authorization(value = "accessCode", scopes = {
-            @io.swagger.annotations.AuthorizationScope(scope = "read", description = "allows reading resources"),
-            @io.swagger.annotations.AuthorizationScope(scope = "write", description = "allows modifying resources")
+            @io.swagger.annotations.AuthorizationScope(scope = "read:profile", description = "allows reading profile")
         })
     }, tags={ "stop", })
     @io.swagger.annotations.ApiResponses(value = { 
-        @io.swagger.annotations.ApiResponse(code = 200, message = "stop(s) updated", response = Void.class),
+        @io.swagger.annotations.ApiResponse(code = 200, message = "stop(s) updated", response = StopWithId.class, responseContainer = "List"),
         
         @io.swagger.annotations.ApiResponse(code = 400, message = "bad request", response = Void.class),
         
@@ -388,8 +363,6 @@ public class RideApi  {
         @io.swagger.annotations.ApiResponse(code = 403, message = "forbidden", response = Void.class),
         
         @io.swagger.annotations.ApiResponse(code = 404, message = "stop(s) not found", response = Void.class),
-        
-        @io.swagger.annotations.ApiResponse(code = 405, message = "not allowed HTTP-Method", response = Void.class),
         
         @io.swagger.annotations.ApiResponse(code = 406, message = "wrong format (only JSON is allowed)", response = Void.class),
         
@@ -401,8 +374,8 @@ public class RideApi  {
         
         @io.swagger.annotations.ApiResponse(code = 503, message = "service or depending services unavailable", response = Void.class) })
     public Response updateStops(@ApiParam(value = "update all stops (one or two) of a specific user" ,required=true) List<StopWithoutId> body
-,@ApiParam(value = "userId",required=true) @PathParam("rideId") Integer rideId
-,@ApiParam(value = "rideId",required=true) @PathParam("userId") Long userId
+,@ApiParam(value = "rideId",required=true) @PathParam("rideId") Integer rideId
+,@ApiParam(value = "userId",required=true) @PathParam("userId") Long userId
 ,@Context SecurityContext securityContext)
     throws NotFoundException {
         return delegate.updateStops(body,rideId,userId,securityContext);

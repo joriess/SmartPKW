@@ -24,7 +24,7 @@ import javax.validation.constraints.*;
 /**
  * ReviewWithoutId
  */
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2019-01-05T15:11:31.517Z")
+@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2019-01-09T18:17:56.749Z")
 public class ReviewWithoutId   {
   @JsonProperty("rating")
   private Integer rating = null;

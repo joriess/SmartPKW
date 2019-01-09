@@ -21,37 +21,14 @@ import io.swagger.annotations.ApiModelProperty;
 import javax.validation.constraints.*;
 
 /**
- * UserWithId
+ * UserWithoutId
  */
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2019-01-09T18:17:56.749Z")
-public class UserWithId   {
-  @JsonProperty("userId")
-  private Long userId = null;
-
+public class UserWithoutId   {
   @JsonProperty("displayName")
   private String displayName = null;
 
-  public UserWithId userId(Long userId) {
-    this.userId = userId;
-    return this;
-  }
-
-  /**
-   * Get userId
-   * @return userId
-   **/
-  @JsonProperty("userId")
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
-  public Long getUserId() {
-    return userId;
-  }
-
-  public void setUserId(Long userId) {
-    this.userId = userId;
-  }
-
-  public UserWithId displayName(String displayName) {
+  public UserWithoutId displayName(String displayName) {
     this.displayName = displayName;
     return this;
   }
@@ -80,23 +57,21 @@ public class UserWithId   {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    UserWithId userWithId = (UserWithId) o;
-    return Objects.equals(this.userId, userWithId.userId) &&
-        Objects.equals(this.displayName, userWithId.displayName);
+    UserWithoutId userWithoutId = (UserWithoutId) o;
+    return Objects.equals(this.displayName, userWithoutId.displayName);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(userId, displayName);
+    return Objects.hash(displayName);
   }
 
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class UserWithId {\n");
+    sb.append("class UserWithoutId {\n");
     
-    sb.append("    userId: ").append(toIndentedString(userId)).append("\n");
     sb.append("    displayName: ").append(toIndentedString(displayName)).append("\n");
     sb.append("}");
     return sb.toString();

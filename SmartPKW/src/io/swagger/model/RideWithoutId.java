@@ -19,19 +19,14 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import javax.validation.constraints.*;
 
 /**
  * RideWithoutId
  */
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2019-01-05T15:11:31.517Z")
+@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2019-01-09T18:17:56.749Z")
 public class RideWithoutId   {
-  @JsonProperty("stopsById")
-  private List<Integer> stopsById = new ArrayList<Integer>();
-
   @JsonProperty("createdByUserById")
   private Long createdByUserById = null;
 
@@ -79,31 +74,6 @@ public class RideWithoutId   {
 
   @JsonProperty("carById")
   private Integer carById = null;
-
-  public RideWithoutId stopsById(List<Integer> stopsById) {
-    this.stopsById = stopsById;
-    return this;
-  }
-
-  public RideWithoutId addStopsByIdItem(Integer stopsByIdItem) {
-    this.stopsById.add(stopsByIdItem);
-    return this;
-  }
-
-  /**
-   * Get stopsById
-   * @return stopsById
-   **/
-  @JsonProperty("stopsById")
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
-  public List<Integer> getStopsById() {
-    return stopsById;
-  }
-
-  public void setStopsById(List<Integer> stopsById) {
-    this.stopsById = stopsById;
-  }
 
   public RideWithoutId createdByUserById(Long createdByUserById) {
     this.createdByUserById = createdByUserById;
@@ -214,8 +184,7 @@ public class RideWithoutId   {
       return false;
     }
     RideWithoutId rideWithoutId = (RideWithoutId) o;
-    return Objects.equals(this.stopsById, rideWithoutId.stopsById) &&
-        Objects.equals(this.createdByUserById, rideWithoutId.createdByUserById) &&
+    return Objects.equals(this.createdByUserById, rideWithoutId.createdByUserById) &&
         Objects.equals(this.createdOn, rideWithoutId.createdOn) &&
         Objects.equals(this.description, rideWithoutId.description) &&
         Objects.equals(this.status, rideWithoutId.status) &&
@@ -224,7 +193,7 @@ public class RideWithoutId   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(stopsById, createdByUserById, createdOn, description, status, carById);
+    return Objects.hash(createdByUserById, createdOn, description, status, carById);
   }
 
 
@@ -233,7 +202,6 @@ public class RideWithoutId   {
     StringBuilder sb = new StringBuilder();
     sb.append("class RideWithoutId {\n");
     
-    sb.append("    stopsById: ").append(toIndentedString(stopsById)).append("\n");
     sb.append("    createdByUserById: ").append(toIndentedString(createdByUserById)).append("\n");
     sb.append("    createdOn: ").append(toIndentedString(createdOn)).append("\n");
     sb.append("    description: ").append(toIndentedString(description)).append("\n");

@@ -7,8 +7,8 @@ import io.swagger.model.CarWithId;
 import io.swagger.model.CarWithoutId;
 import io.swagger.model.ReviewWithId;
 import io.swagger.model.ReviewWithoutId;
-import io.swagger.model.RideWithId;
 import io.swagger.model.UserWithId;
+import io.swagger.model.UserWithoutId;
 
 import java.util.List;
 import io.swagger.api.NotFoundException;
@@ -20,10 +20,10 @@ import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import javax.validation.constraints.*;
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2019-01-05T15:11:31.517Z")
+@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2019-01-09T18:17:56.749Z")
 public class UserApiServiceImpl extends UserApiService {
     @Override
-    public Response createCar(String userId, CarWithoutId body, SecurityContext securityContext) throws NotFoundException {
+    public Response createCar(Long userId, CarWithoutId body, SecurityContext securityContext) throws NotFoundException {
         // do some magic!
         return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
     }
@@ -33,12 +33,12 @@ public class UserApiServiceImpl extends UserApiService {
         return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
     }
     @Override
-    public Response createUser(UserWithId body, SecurityContext securityContext) throws NotFoundException {
+    public Response createUser(UserWithoutId body, SecurityContext securityContext) throws NotFoundException {
         // do some magic!
         return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
     }
     @Override
-    public Response deleteCar(String userId, Integer carId, SecurityContext securityContext) throws NotFoundException {
+    public Response deleteCar(Long userId, Integer carId, SecurityContext securityContext) throws NotFoundException {
         // do some magic!
         return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
     }
@@ -48,7 +48,7 @@ public class UserApiServiceImpl extends UserApiService {
         return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
     }
     @Override
-    public Response deleteUser(String userId, SecurityContext securityContext) throws NotFoundException {
+    public Response deleteUser(Long userId, SecurityContext securityContext) throws NotFoundException {
         // do some magic!
         return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
     }
@@ -68,17 +68,17 @@ public class UserApiServiceImpl extends UserApiService {
         return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
     }
     @Override
-    public Response getReviewsByUserId(Long userId, SecurityContext securityContext) throws NotFoundException {
+    public Response getReviewsByUserId(Long userId, Integer reviewId, SecurityContext securityContext) throws NotFoundException {
         // do some magic!
         return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
     }
     @Override
-    public Response getUserByName(String userId, SecurityContext securityContext) throws NotFoundException {
+    public Response getUserByName(Long userId, SecurityContext securityContext) throws NotFoundException {
         // do some magic!
         return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
     }
     @Override
-    public Response loginUser( @NotNull String userId,  @NotNull String password, SecurityContext securityContext) throws NotFoundException {
+    public Response loginUser( @NotNull Long userId,  @NotNull String password, SecurityContext securityContext) throws NotFoundException {
         // do some magic!
         return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
     }
@@ -88,7 +88,7 @@ public class UserApiServiceImpl extends UserApiService {
         return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
     }
     @Override
-    public Response updateCar(String userId, Integer carId, CarWithoutId body, SecurityContext securityContext) throws NotFoundException {
+    public Response updateCar(Long userId, Integer carId, CarWithoutId body, SecurityContext securityContext) throws NotFoundException {
         // do some magic!
         return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
     }
@@ -98,7 +98,7 @@ public class UserApiServiceImpl extends UserApiService {
         return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
     }
     @Override
-    public Response updateUser(String userId, UserWithId body, SecurityContext securityContext) throws NotFoundException {
+    public Response updateUser(Long userId, UserWithId body, SecurityContext securityContext) throws NotFoundException {
         // do some magic!
         return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
     }

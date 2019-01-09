@@ -27,7 +27,7 @@ import javax.validation.constraints.*;
 /**
  * StopWithId
  */
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2019-01-05T15:11:31.517Z")
+@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2019-01-09T18:17:56.749Z")
 public class StopWithId   {
   @JsonProperty("stopId")
   private Integer stopId = null;
@@ -37,6 +37,9 @@ public class StopWithId   {
 
   @JsonProperty("createdByUserById")
   private Integer createdByUserById = null;
+
+  @JsonProperty("createdForRideById")
+  private Integer createdForRideById = null;
 
   @JsonProperty("startPointForUserById")
   private List<Long> startPointForUserById = null;
@@ -152,6 +155,25 @@ public class StopWithId   {
 
   public void setCreatedByUserById(Integer createdByUserById) {
     this.createdByUserById = createdByUserById;
+  }
+
+  public StopWithId createdForRideById(Integer createdForRideById) {
+    this.createdForRideById = createdForRideById;
+    return this;
+  }
+
+  /**
+   * Get createdForRideById
+   * @return createdForRideById
+   **/
+  @JsonProperty("createdForRideById")
+  @ApiModelProperty(value = "")
+  public Integer getCreatedForRideById() {
+    return createdForRideById;
+  }
+
+  public void setCreatedForRideById(Integer createdForRideById) {
+    this.createdForRideById = createdForRideById;
   }
 
   public StopWithId startPointForUserById(List<Long> startPointForUserById) {
@@ -337,6 +359,7 @@ public class StopWithId   {
     return Objects.equals(this.stopId, stopWithId.stopId) &&
         Objects.equals(this.rank, stopWithId.rank) &&
         Objects.equals(this.createdByUserById, stopWithId.createdByUserById) &&
+        Objects.equals(this.createdForRideById, stopWithId.createdForRideById) &&
         Objects.equals(this.startPointForUserById, stopWithId.startPointForUserById) &&
         Objects.equals(this.endPointForUserById, stopWithId.endPointForUserById) &&
         Objects.equals(this.address, stopWithId.address) &&
@@ -349,7 +372,7 @@ public class StopWithId   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(stopId, rank, createdByUserById, startPointForUserById, endPointForUserById, address, latitude, longitude, timeFrameStart, timeFrameEnd, status);
+    return Objects.hash(stopId, rank, createdByUserById, createdForRideById, startPointForUserById, endPointForUserById, address, latitude, longitude, timeFrameStart, timeFrameEnd, status);
   }
 
 
@@ -361,6 +384,7 @@ public class StopWithId   {
     sb.append("    stopId: ").append(toIndentedString(stopId)).append("\n");
     sb.append("    rank: ").append(toIndentedString(rank)).append("\n");
     sb.append("    createdByUserById: ").append(toIndentedString(createdByUserById)).append("\n");
+    sb.append("    createdForRideById: ").append(toIndentedString(createdForRideById)).append("\n");
     sb.append("    startPointForUserById: ").append(toIndentedString(startPointForUserById)).append("\n");
     sb.append("    endPointForUserById: ").append(toIndentedString(endPointForUserById)).append("\n");
     sb.append("    address: ").append(toIndentedString(address)).append("\n");
