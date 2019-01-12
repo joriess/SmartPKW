@@ -8,6 +8,7 @@ public class Driver {
 		String url = "jdbc:mysql://localhost:3306/SmartPKW";
 		String username = "root";
 		String password = "";
+<<<<<<< HEAD
 		System.out.println("Database started");
 		try {
 			// 1. Get a connection to Databaase
@@ -38,6 +39,28 @@ public class Driver {
 			exc.printStackTrace();
 		}
 		return "";
+=======
+		System.out.println("lol");
+		try {
+			// 1. Get a connection to Databaase
+			Connection myConn = DriverManager.getConnection(url, username, password);
+			//2. Create Statement
+			Statement myStmt = myConn.createStatement();
+			
+			//3. Execute SQL query
+			ResultSet myRs = myStmt.executeQuery("select * from user");
+			
+			//4. Process result set
+			while (myRs.next()) {
+				System.out.println(myRs.getString("name"));
+				System.out.println(myRs.getString("age"));
+			}
+			
+		} catch(Exception exc) {
+			exc.printStackTrace();
+		}
+
+>>>>>>> branch 'michael' of https://github.com/joriess/SmartPKW.git
 	}
 
 }
