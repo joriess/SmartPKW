@@ -3,6 +3,7 @@ package mySQLDatabase;
 import java.sql.*;
 public class Driver {
 
+	public static Connection myConn;
 	public static void main(String[] args) {
 		String url = "jdbc:mysql://localhost:3306/SmartPKW";
 		String username = "root";
@@ -10,7 +11,15 @@ public class Driver {
 		System.out.println("Database started");
 		try {
 			// 1. Get a connection to Databaase
-			Connection myConn = DriverManager.getConnection(url, username, password);
+			myConn = DriverManager.getConnection(url, username, password);
+			getUserName();
+		} catch(Exception exc) {
+			exc.printStackTrace();
+		}
+	}
+	
+	public static String getUserName() throws Exception{
+		try {
 			//2. Create Statement
 			Statement myStmt = myConn.createStatement();
 			
@@ -21,12 +30,14 @@ public class Driver {
 			while (myRs.next()) {
 				System.out.println(myRs.getString("name"));
 				System.out.println(myRs.getString("age"));
+				//return myRs.getString("name");
+				//myRs.getString("age");
 			}
-			
-		} catch(Exception exc) {
+			myStmt.executeUpdate("insert into user (userId, name, age) values (5, 'Michael', 25)");
+		} catch (Exception exc) {
 			exc.printStackTrace();
 		}
-
+		return "";
 	}
 
 }
