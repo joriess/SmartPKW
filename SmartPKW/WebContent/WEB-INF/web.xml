@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<web-app version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee"
+<web-app version="3.1" xmlns="http://java.sun.com/xml/ns/j2ee"
   xmlns:j2ee="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee    http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+  xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee    http://java.sun.com/xml/ns/j2ee/web-app_3_1.xsd">
 
     <servlet>
         <servlet-name>jersey</servlet-name>
@@ -38,7 +38,7 @@
         </init-param>
         <init-param>
             <param-name>swagger.api.basepath</param-name>
-            <param-value>https://virtserver.swaggerhub.com/h3nn1ng/SmartPKW/1.0.0</param-value>
+            <param-value>http://localhost:8080/SmartPKW</param-value>
         </init-param>
 
         <load-on-startup>2</load-on-startup>
@@ -50,7 +50,7 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>jersey</servlet-name>
-        <url-pattern>/SmartPKW/*</url-pattern>
+        <url-pattern>/*</url-pattern>
     </servlet-mapping>
     <filter>
         <filter-name>ApiOriginFilter</filter-name>
@@ -58,6 +58,6 @@
     </filter>
     <filter-mapping>
         <filter-name>ApiOriginFilter</filter-name>
-        <url-pattern>/disabled/*</url-pattern>
+        <url-pattern>/*</url-pattern>
     </filter-mapping>
 </web-app>
