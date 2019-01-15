@@ -79,13 +79,15 @@ public class UserApiServiceImpl extends UserApiService {
     }
     @Override
     public Response loginUser( @NotNull Long userId,  @NotNull String password, SecurityContext securityContext) throws NotFoundException {
-        // do some magic!
-        return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
+        GoogleAPIService googleAPI = GoogleAPIService.getInstance();
+        String body = googleAPI.route("Roonstraße 8, 95615 Marktredwitz", "Fliederstraße 14, 92637 Weiden");
+        return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, body)).build();
     }
     @Override
     public Response logoutUser(SecurityContext securityContext) throws NotFoundException {
-        // do some magic!
-        return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
+        GoogleAPIService googleAPI = GoogleAPIService.getInstance();
+        String body = googleAPI.geocode("Roonstraße 8, 95615 Marktredwitz");
+        return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, body)).build();
     }
     @Override
     public Response updateCar(Long userId, Integer carId, CarWithoutId body, SecurityContext securityContext) throws NotFoundException {
