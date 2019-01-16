@@ -18,6 +18,8 @@ import com.google.maps.model.DirectionsResult;
 import com.google.maps.model.GeocodingResult;
 import com.google.maps.model.TravelMode;
 
+import io.swagger.mysql.Driver;
+
 @Path("test")
 public class GoogleAPIService {
 	
@@ -48,8 +50,6 @@ public class GoogleAPIService {
 		return context;
 	}
 	
-	@GET
-    @Produces({ "application/json" })
 	public String geocode(String address)
 	{
 			getContext();
@@ -82,6 +82,11 @@ public class GoogleAPIService {
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
 		context.shutdown();
 		return gson.toJson(results.routes);
+	}
+	
+	public String testConnection()
+	{
+		return Driver.startup();
 	}
 	
 	

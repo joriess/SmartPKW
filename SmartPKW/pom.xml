@@ -207,6 +207,21 @@
       <version>${jackson-version}</version>
     </dependency>
     <dependency>
+  		<groupId>com.google.oauth-client</groupId>
+  		<artifactId>google-oauth-client</artifactId>
+  		<version>1.23.0</version>
+	</dependency>
+	<dependency>
+  		<groupId>com.google.oauth-client</groupId>
+  		<artifactId>google-oauth-client-servlet</artifactId>
+  		<version>1.23.0</version>
+	</dependency>
+	<dependency>
+  		<groupId>com.google.oauth-client</groupId>
+  		<artifactId>google-oauth-client-java6</artifactId>
+  		<version>1.23.0</version>
+	</dependency>
+    <dependency>
   		<groupId>com.google.maps</groupId>
   		<artifactId>google-maps-services</artifactId>
  	 	<version>0.9.1</version>
