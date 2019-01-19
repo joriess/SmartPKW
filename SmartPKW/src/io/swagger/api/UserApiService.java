@@ -28,9 +28,9 @@ public abstract class UserApiService {
     public abstract Response deleteCar(Long userId,Integer carId,SecurityContext securityContext) throws NotFoundException;
     public abstract Response deleteReview(Long userId,Integer reviewId,SecurityContext securityContext) throws NotFoundException;
     public abstract Response deleteUser(Long userId,SecurityContext securityContext) throws NotFoundException;
-    public abstract Response getCarByUserIdAndCarId(Long userId,Integer carId,SecurityContext securityContext) throws NotFoundException;
-    public abstract Response getCarsByUserId(String userId,SecurityContext securityContext) throws NotFoundException;
-    public abstract Response getReviewByUserIdAndReviewId(Long userId,Integer reviewId,SecurityContext securityContext) throws NotFoundException;
+    public abstract Response getCarByCarId(Integer carId,SecurityContext securityContext) throws NotFoundException;
+    public abstract Response getCarsByUserId(Long userId,SecurityContext securityContext) throws NotFoundException;
+    public abstract Response getReviewByReviewId(Integer reviewId,SecurityContext securityContext) throws NotFoundException;
     public abstract Response getReviewsByUserId(Long userId,Integer reviewId,SecurityContext securityContext) throws NotFoundException;
     public abstract Response getUserByName(Long userId,SecurityContext securityContext) throws NotFoundException;
     public abstract Response loginUser( @NotNull Long userId, @NotNull String password,SecurityContext securityContext) throws NotFoundException;

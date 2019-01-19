@@ -288,7 +288,7 @@ public class UserApi  {
 ,@ApiParam(value = "The id of the car that needs to be fetched",required=true) @PathParam("carId") Integer carId
 ,@Context SecurityContext securityContext)
     throws NotFoundException {
-        return delegate.getCarByUserIdAndCarId(userId,carId,securityContext);
+        return delegate.getCarByCarId(carId,securityContext);
     }
     @GET
     @Path("/{userId}/car")
@@ -319,7 +319,7 @@ public class UserApi  {
         @io.swagger.annotations.ApiResponse(code = 500, message = "internal server error", response = Void.class),
         
         @io.swagger.annotations.ApiResponse(code = 503, message = "service or depending services unavailable", response = Void.class) })
-    public Response getCarsByUserId(@ApiParam(value = "The name of the user whichs cars needs to be fetched.",required=true) @PathParam("userId") String userId
+    public Response getCarsByUserId(@ApiParam(value = "The name of the user whichs cars needs to be fetched.",required=true) @PathParam("userId") Long userId
 ,@Context SecurityContext securityContext)
     throws NotFoundException {
         return delegate.getCarsByUserId(userId,securityContext);
@@ -353,7 +353,7 @@ public class UserApi  {
 ,@ApiParam(value = "The id of the review that needs to be fetched",required=true) @PathParam("reviewId") Integer reviewId
 ,@Context SecurityContext securityContext)
     throws NotFoundException {
-        return delegate.getReviewByUserIdAndReviewId(userId,reviewId,securityContext);
+        return delegate.getReviewByReviewId(reviewId,securityContext);
     }
     @GET
     @Path("/{userId}/review")

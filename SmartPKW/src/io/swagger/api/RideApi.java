@@ -85,7 +85,7 @@ public class RideApi  {
 ,@ApiParam(value = "Creates a ride-object with at least two stops. Can only be used by a client, who already created two or more stops for this ride-object." ,required=true) RideWithoutId body
 ,@Context SecurityContext securityContext)
     throws NotFoundException {
-        return delegate.createRide(rideId,body,securityContext);
+        return delegate.createRide(body,securityContext);
     }
     @POST
     @Path("/{rideId}/stop/")

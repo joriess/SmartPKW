@@ -32,23 +32,26 @@ import com.google.api.client.util.store.FileDataStoreFactory;
 @Produces({ "application/json" })
 public class AuthService  {
 	private String REDIRECT_URI = "http://localhost:8080";
+	//private final String CLIENT_ID = "673894474162-t0udjug4dro0htn3v3vdl0qrhi2fnt1b.apps.googleusercontent.com";
+	//private final String CLIENT_SECRET = "4rBrw6kNdD50gSLRPF6omHjz";
+	
 	@POST
-	public void authUser(@HeaderParam("X-Requested-With") String header)
+	public void authUser(@HeaderParam("X-Requested-With") String requestedHeader, String authResult)
 	{	
 		//authcode as param
 		// (Receive authCode via HTTPS POST)
 
 
-		//if (request.getHeader('X-Requested-With') == null) {
+		if (requestedHeader == null) {
 		  // Without the `X-Requested-With` header, this request could be forged. Aborts.
-		//}
+		}
 
 		// Set path to the Web application client_secret_*.json file you downloaded from the
 		// Google API Console: https://console.developers.google.com/apis/credentials
 		// You can also find your Web application client ID and client secret from the
 		// console and specify them directly when you create the GoogleAuthorizationCodeTokenRequest
 		// object.
-		String CLIENT_SECRET_FILE = "/path/to/client_secret.json";
+		String CLIENT_SECRET_FILE = "/home/vmuser/Dokumente/client_secret_673894474162-ol5ei74odbet7mbj4i9gpho2us7kl53v.apps.googleusercontent.com.json";
 
 		// Exchange auth code for access token
 		GoogleClientSecrets clientSecrets = null;
@@ -67,7 +70,7 @@ public class AuthService  {
 			      "https://www.googleapis.com/oauth2/v4/token",
 			      clientSecrets.getDetails().getClientId(),
 			      clientSecrets.getDetails().getClientSecret(),
-			      "123",
+			      authResult, //authCode
 			      REDIRECT_URI)  // Specify the same redirect URI that you use with your web
 			                     // app. If you don't have a web version of your app, you can
 			                     // specify an empty string.

@@ -2,6 +2,8 @@ package io.swagger.api;
 
 import javax.xml.bind.annotation.XmlTransient;
 
+import io.swagger.model.CarWithId;
+
 @javax.xml.bind.annotation.XmlRootElement
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2019-01-09T18:17:56.749Z")
 public class ApiResponseMessage {
@@ -14,6 +16,7 @@ public class ApiResponseMessage {
     int code;
     String type;
     String message;
+    CarWithId carWithId;
 
     public ApiResponseMessage(){}
 
@@ -42,7 +45,12 @@ public class ApiResponseMessage {
         this.message = message;
     }
 
-    @XmlTransient
+    public ApiResponseMessage(int code, CarWithId message) {
+        this.code = code;
+        this.carWithId = message;
+	}
+
+	@XmlTransient
     public int getCode() {
         return code;
     }
