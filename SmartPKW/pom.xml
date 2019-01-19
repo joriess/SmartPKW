@@ -221,6 +221,16 @@
   		<artifactId>google-oauth-client-java6</artifactId>
   		<version>1.23.0</version>
 	</dependency>
+	<dependency>
+  		<groupId>com.google.api-client</groupId>
+  		<artifactId>google-api-client-jackson2</artifactId>
+  		<version>1.23.0</version>
+	</dependency>
+	<dependency>
+      <groupId>com.google.apis</groupId>
+      <artifactId>google-api-services-oauth2</artifactId>
+      <version>v2-rev141-1.25.0</version>
+    </dependency>
     <dependency>
   		<groupId>com.google.maps</groupId>
   		<artifactId>google-maps-services</artifactId>

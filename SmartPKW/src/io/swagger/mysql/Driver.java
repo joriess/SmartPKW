@@ -9,6 +9,7 @@ public class Driver {
 		String password = "";
 		System.out.println("lol");
 		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
 			// 1. Get a connection to Database
 			Connection myConn = DriverManager.getConnection(url, username, password);
 			//2. Create Statement
