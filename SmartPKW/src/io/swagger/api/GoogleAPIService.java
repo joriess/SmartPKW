@@ -20,7 +20,7 @@ import com.google.maps.model.DistanceMatrix;
 import com.google.maps.model.GeocodingResult;
 import com.google.maps.model.TravelMode;
 
-import io.swagger.mysql.Driver;
+import io.swagger.mysql.DataAccess;
 
 @Path("test")
 public class GoogleAPIService {

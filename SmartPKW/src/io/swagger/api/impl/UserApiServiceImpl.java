@@ -9,6 +9,7 @@ import io.swagger.model.ReviewWithId;
 import io.swagger.model.ReviewWithoutId;
 import io.swagger.model.UserWithId;
 import io.swagger.model.UserWithoutId;
+import io.swagger.mysql.DataAccess;
 
 import java.util.List;
 import io.swagger.api.NotFoundException;
@@ -23,10 +24,7 @@ import javax.validation.constraints.*;
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2019-01-09T18:17:56.749Z")
 public class UserApiServiceImpl extends UserApiService {
 	
-	public void UserApiServiceImpl()
-	{
-		
-	}
+	DataAccess dataAccess = DataAccess.getInstance();
 	
     @Override
     public Response createCar(Long userId, CarWithoutId body, SecurityContext securityContext) throws NotFoundException {

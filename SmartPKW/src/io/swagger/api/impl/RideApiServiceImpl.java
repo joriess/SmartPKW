@@ -2,6 +2,7 @@ package io.swagger.api.impl;
 
 import io.swagger.api.*;
 import io.swagger.model.*;
+import io.swagger.mysql.DataAccess;
 
 import java.util.List;
 import java.util.List;
@@ -16,6 +17,9 @@ import javax.ws.rs.core.SecurityContext;
 import javax.validation.constraints.*;
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2019-01-09T18:17:56.749Z")
 public class RideApiServiceImpl extends RideApiService {
+	
+	DataAccess dataAccess = DataAccess.getInstance();
+	
     @Override
     public Response createRide(RideWithoutId body, SecurityContext securityContext) throws NotFoundException {
         RideWithId response = dataAccess.createRide(body);
@@ -33,7 +37,7 @@ public class RideApiServiceImpl extends RideApiService {
     }
     @Override
     public Response deleteStops(Long userId, Integer rideId, SecurityContext securityContext) throws NotFoundException {
-        dataAccess.deleteStop(stopId);
+        dataAccess.deleteStops(rideId, userId);
     	return Response.status(204).build();
     }
     @Override
