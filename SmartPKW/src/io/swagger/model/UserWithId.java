@@ -26,12 +26,12 @@ import javax.validation.constraints.*;
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2019-01-09T18:17:56.749Z")
 public class UserWithId   {
   @JsonProperty("userId")
-  private Long userId = null;
+  private String userId = null;
 
   @JsonProperty("displayName")
   private String displayName = null;
 
-  public UserWithId userId(Long userId) {
+  public UserWithId userId(String userId) {
     this.userId = userId;
     return this;
   }
@@ -43,11 +43,11 @@ public class UserWithId   {
   @JsonProperty("userId")
   @ApiModelProperty(required = true, value = "")
   @NotNull
-  public Long getUserId() {
+  public String getUserId() {
     return userId;
   }
 
-  public void setUserId(Long userId) {
+  public void setUserId(String userId) {
     this.userId = userId;
   }
 

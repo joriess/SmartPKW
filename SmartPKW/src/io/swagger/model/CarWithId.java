@@ -30,7 +30,7 @@ public class CarWithId   {
   private Integer carId = null;
 
   @JsonProperty("createdByUserById")
-  private Long createdByUserById = null;
+  private String createdByUserById = null;
 
   @JsonProperty("description")
   private String description = null;
@@ -94,7 +94,7 @@ public class CarWithId   {
     this.carId = carId;
   }
 
-  public CarWithId createdByUserById(Long createdByUserById) {
+  public CarWithId createdByUserById(String createdByUserById) {
     this.createdByUserById = createdByUserById;
     return this;
   }
@@ -106,11 +106,11 @@ public class CarWithId   {
   @JsonProperty("createdByUserById")
   @ApiModelProperty(required = true, value = "")
   @NotNull
-  public Long getCreatedByUserById() {
+  public String getCreatedByUserById() {
     return createdByUserById;
   }
 
-  public void setCreatedByUserById(Long createdByUserById) {
+  public void setCreatedByUserById(String createdByUserById) {
     this.createdByUserById = createdByUserById;
   }
 

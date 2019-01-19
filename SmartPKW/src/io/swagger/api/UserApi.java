@@ -86,7 +86,7 @@ public class UserApi  {
         @io.swagger.annotations.ApiResponse(code = 500, message = "internal server error", response = Void.class),
         
         @io.swagger.annotations.ApiResponse(code = 503, message = "service or depending services unavailable", response = Void.class) })
-    public Response createCar(@ApiParam(value = "The id of the user whichs cars needs to be fetched.",required=true) @PathParam("userId") Long userId
+    public Response createCar(@ApiParam(value = "The id of the user whichs cars needs to be fetched.",required=true) @PathParam("userId") String userId
 ,@ApiParam(value = "Created car object" ,required=true) CarWithoutId body
 ,@Context SecurityContext securityContext)
     throws NotFoundException {
@@ -119,7 +119,7 @@ public class UserApi  {
         @io.swagger.annotations.ApiResponse(code = 500, message = "internal server error", response = Void.class),
         
         @io.swagger.annotations.ApiResponse(code = 503, message = "service or depending services unavailable", response = Void.class) })
-    public Response createReview(@ApiParam(value = "",required=true) @PathParam("userId") Long userId
+    public Response createReview(@ApiParam(value = "",required=true) @PathParam("userId") String userId
 ,@ApiParam(value = "" ,required=true) ReviewWithoutId body
 ,@Context SecurityContext securityContext)
     throws NotFoundException {
@@ -184,7 +184,7 @@ public class UserApi  {
         @io.swagger.annotations.ApiResponse(code = 500, message = "internal server error", response = Void.class),
         
         @io.swagger.annotations.ApiResponse(code = 503, message = "service or depending services unavailable", response = Void.class) })
-    public Response deleteCar(@ApiParam(value = "The name of the user whichs cars needs to be fetched.",required=true) @PathParam("userId") Long userId
+    public Response deleteCar(@ApiParam(value = "The name of the user whichs cars needs to be fetched.",required=true) @PathParam("userId") String userId
 ,@ApiParam(value = "The id of the car that needs to be deleted",required=true) @PathParam("carId") Integer carId
 ,@Context SecurityContext securityContext)
     throws NotFoundException {
@@ -217,7 +217,7 @@ public class UserApi  {
         @io.swagger.annotations.ApiResponse(code = 500, message = "internal server error", response = Void.class),
         
         @io.swagger.annotations.ApiResponse(code = 503, message = "service or depending services unavailable", response = Void.class) })
-    public Response deleteReview(@ApiParam(value = "The id of the user whichs review need to be updated",required=true) @PathParam("userId") Long userId
+    public Response deleteReview(@ApiParam(value = "The id of the user whichs review need to be updated",required=true) @PathParam("userId") String userId
 ,@ApiParam(value = "The id of the review that needs to be updated",required=true) @PathParam("reviewId") Integer reviewId
 ,@Context SecurityContext securityContext)
     throws NotFoundException {
@@ -250,7 +250,7 @@ public class UserApi  {
         @io.swagger.annotations.ApiResponse(code = 500, message = "internal server error", response = Void.class),
         
         @io.swagger.annotations.ApiResponse(code = 503, message = "service or depending services unavailable", response = Void.class) })
-    public Response deleteUser(@ApiParam(value = "The name that needs to be deleted",required=true) @PathParam("userId") Long userId
+    public Response deleteUser(@ApiParam(value = "The name that needs to be deleted",required=true) @PathParam("userId") String userId
 ,@Context SecurityContext securityContext)
     throws NotFoundException {
         return delegate.deleteUser(userId,securityContext);
@@ -284,7 +284,7 @@ public class UserApi  {
         @io.swagger.annotations.ApiResponse(code = 500, message = "internal server error", response = Void.class),
         
         @io.swagger.annotations.ApiResponse(code = 503, message = "service or depending services unavailable", response = Void.class) })
-    public Response getCarByUserIdAndCarId(@ApiParam(value = "The id of the user whichs cars need to be fetched.",required=true) @PathParam("userId") Long userId
+    public Response getCarByUserIdAndCarId(@ApiParam(value = "The id of the user whichs cars need to be fetched.",required=true) @PathParam("userId") String userId
 ,@ApiParam(value = "The id of the car that needs to be fetched",required=true) @PathParam("carId") Integer carId
 ,@Context SecurityContext securityContext)
     throws NotFoundException {
@@ -319,7 +319,7 @@ public class UserApi  {
         @io.swagger.annotations.ApiResponse(code = 500, message = "internal server error", response = Void.class),
         
         @io.swagger.annotations.ApiResponse(code = 503, message = "service or depending services unavailable", response = Void.class) })
-    public Response getCarsByUserId(@ApiParam(value = "The name of the user whichs cars needs to be fetched.",required=true) @PathParam("userId") Long userId
+    public Response getCarsByUserId(@ApiParam(value = "The name of the user whichs cars needs to be fetched.",required=true) @PathParam("userId") String userId
 ,@Context SecurityContext securityContext)
     throws NotFoundException {
         return delegate.getCarsByUserId(userId,securityContext);
@@ -349,7 +349,7 @@ public class UserApi  {
         @io.swagger.annotations.ApiResponse(code = 500, message = "internal server error", response = Void.class),
         
         @io.swagger.annotations.ApiResponse(code = 503, message = "service or depending services unavailable", response = Void.class) })
-    public Response getReviewByUserIdAndReviewId(@ApiParam(value = "The id of the user whichs review need to be fetched.",required=true) @PathParam("userId") Long userId
+    public Response getReviewByUserIdAndReviewId(@ApiParam(value = "The id of the user whichs review need to be fetched.",required=true) @PathParam("userId") String userId
 ,@ApiParam(value = "The id of the review that needs to be fetched",required=true) @PathParam("reviewId") Integer reviewId
 ,@Context SecurityContext securityContext)
     throws NotFoundException {
@@ -380,7 +380,7 @@ public class UserApi  {
         @io.swagger.annotations.ApiResponse(code = 500, message = "internal server error", response = Void.class),
         
         @io.swagger.annotations.ApiResponse(code = 503, message = "service or depending services unavailable", response = Void.class) })
-    public Response getReviewsByUserId(@ApiParam(value = "The id of the user whichs review need to be fetched.",required=true) @PathParam("userId") Long userId
+    public Response getReviewsByUserId(@ApiParam(value = "The id of the user whichs review need to be fetched.",required=true) @PathParam("userId") String userId
 ,@ApiParam(value = "The id of the review that needs to be fetched",required=true) @PathParam("reviewId") Integer reviewId
 ,@Context SecurityContext securityContext)
     throws NotFoundException {
@@ -415,7 +415,7 @@ public class UserApi  {
         @io.swagger.annotations.ApiResponse(code = 500, message = "internal server error", response = Void.class),
         
         @io.swagger.annotations.ApiResponse(code = 503, message = "service or depending services unavailable", response = Void.class) })
-    public Response getUserByName(@ApiParam(value = "The id that needs to be fetched",required=true) @PathParam("userId") Long userId
+    public Response getUserByName(@ApiParam(value = "The id that needs to be fetched",required=true) @PathParam("userId") String userId
 ,@Context SecurityContext securityContext)
     throws NotFoundException {
         return delegate.getUserByName(userId,securityContext);
@@ -449,7 +449,7 @@ public class UserApi  {
         @io.swagger.annotations.ApiResponse(code = 500, message = "internal server error", response = Void.class),
         
         @io.swagger.annotations.ApiResponse(code = 503, message = "service or depending services unavailable", response = Void.class) })
-    public Response loginUser(@ApiParam(value = "The user name for login",required=true) @QueryParam("userId") Long userId
+    public Response loginUser(@ApiParam(value = "The user name for login",required=true) @QueryParam("userId") String userId
 ,@ApiParam(value = "The password for login in clear text",required=true) @QueryParam("password") String password
 ,@Context SecurityContext securityContext)
     throws NotFoundException {
@@ -517,7 +517,7 @@ public class UserApi  {
         @io.swagger.annotations.ApiResponse(code = 500, message = "internal server error", response = Void.class),
         
         @io.swagger.annotations.ApiResponse(code = 503, message = "service or depending services unavailable", response = Void.class) })
-    public Response updateCar(@ApiParam(value = "The name of the user whichs cars needs to be fetched.",required=true) @PathParam("userId") Long userId
+    public Response updateCar(@ApiParam(value = "The name of the user whichs cars needs to be fetched.",required=true) @PathParam("userId") String userId
 ,@ApiParam(value = "id that needs to be updated",required=true) @PathParam("carId") Integer carId
 ,@ApiParam(value = "Updated car object" ,required=true) CarWithoutId body
 ,@Context SecurityContext securityContext)
@@ -553,7 +553,7 @@ public class UserApi  {
         @io.swagger.annotations.ApiResponse(code = 500, message = "internal server error", response = Void.class),
         
         @io.swagger.annotations.ApiResponse(code = 503, message = "service or depending services unavailable", response = Void.class) })
-    public Response updateReview(@ApiParam(value = "The id of the user whichs review need to be updated",required=true) @PathParam("userId") Long userId
+    public Response updateReview(@ApiParam(value = "The id of the user whichs review need to be updated",required=true) @PathParam("userId") String userId
 ,@ApiParam(value = "The id of the review that needs to be updated",required=true) @PathParam("reviewId") Integer reviewId
 ,@ApiParam(value = "Updated review object" ,required=true) ReviewWithoutId body
 ,@Context SecurityContext securityContext)
@@ -589,7 +589,7 @@ public class UserApi  {
         @io.swagger.annotations.ApiResponse(code = 500, message = "internal server error", response = Void.class),
         
         @io.swagger.annotations.ApiResponse(code = 503, message = "service or depending services unavailable", response = Void.class) })
-    public Response updateUser(@ApiParam(value = "name that need to be updated",required=true) @PathParam("userId") Long userId
+    public Response updateUser(@ApiParam(value = "name that need to be updated",required=true) @PathParam("userId") String userId
 ,@ApiParam(value = "Updated user object" ,required=true) UserWithId body
 ,@Context SecurityContext securityContext)
     throws NotFoundException {

@@ -33,16 +33,16 @@ public class StopWithoutId   {
   private Integer rank = null;
 
   @JsonProperty("createdByUserById")
-  private Integer createdByUserById = null;
+  private String createdByUserById = null;
 
   @JsonProperty("createdForRideById")
   private Integer createdForRideById = null;
 
   @JsonProperty("startPointForUserById")
-  private List<Long> startPointForUserById = null;
+  private List<String> startPointForUserById = null;
 
   @JsonProperty("endPointForUserById")
-  private List<Long> endPointForUserById = null;
+  private List<String> endPointForUserById = null;
 
   @JsonProperty("address")
   private String address = null;
@@ -114,7 +114,7 @@ public class StopWithoutId   {
     this.rank = rank;
   }
 
-  public StopWithoutId createdByUserById(Integer createdByUserById) {
+  public StopWithoutId createdByUserById(String createdByUserById) {
     this.createdByUserById = createdByUserById;
     return this;
   }
@@ -126,11 +126,11 @@ public class StopWithoutId   {
   @JsonProperty("createdByUserById")
   @ApiModelProperty(required = true, value = "")
   @NotNull
-  public Integer getCreatedByUserById() {
+  public String getCreatedByUserById() {
     return createdByUserById;
   }
 
-  public void setCreatedByUserById(Integer createdByUserById) {
+  public void setCreatedByUserById(String createdByUserById) {
     this.createdByUserById = createdByUserById;
   }
 
@@ -153,14 +153,14 @@ public class StopWithoutId   {
     this.createdForRideById = createdForRideById;
   }
 
-  public StopWithoutId startPointForUserById(List<Long> startPointForUserById) {
+  public StopWithoutId startPointForUserById(List<String> startPointForUserById) {
     this.startPointForUserById = startPointForUserById;
     return this;
   }
 
-  public StopWithoutId addStartPointForUserByIdItem(Long startPointForUserByIdItem) {
+  public StopWithoutId addStartPointForUserByIdItem(String startPointForUserByIdItem) {
     if (this.startPointForUserById == null) {
-      this.startPointForUserById = new ArrayList<Long>();
+      this.startPointForUserById = new ArrayList<String>();
     }
     this.startPointForUserById.add(startPointForUserByIdItem);
     return this;
@@ -172,22 +172,22 @@ public class StopWithoutId   {
    **/
   @JsonProperty("startPointForUserById")
   @ApiModelProperty(value = "")
-  public List<Long> getStartPointForUserById() {
+  public List<String> getStartPointForUserById() {
     return startPointForUserById;
   }
 
-  public void setStartPointForUserById(List<Long> startPointForUserById) {
+  public void setStartPointForUserById(List<String> startPointForUserById) {
     this.startPointForUserById = startPointForUserById;
   }
 
-  public StopWithoutId endPointForUserById(List<Long> endPointForUserById) {
+  public StopWithoutId endPointForUserById(List<String> endPointForUserById) {
     this.endPointForUserById = endPointForUserById;
     return this;
   }
 
-  public StopWithoutId addEndPointForUserByIdItem(Long endPointForUserByIdItem) {
+  public StopWithoutId addEndPointForUserByIdItem(String endPointForUserByIdItem) {
     if (this.endPointForUserById == null) {
-      this.endPointForUserById = new ArrayList<Long>();
+      this.endPointForUserById = new ArrayList<String>();
     }
     this.endPointForUserById.add(endPointForUserByIdItem);
     return this;
@@ -199,11 +199,11 @@ public class StopWithoutId   {
    **/
   @JsonProperty("endPointForUserById")
   @ApiModelProperty(value = "")
-  public List<Long> getEndPointForUserById() {
+  public List<String> getEndPointForUserById() {
     return endPointForUserById;
   }
 
-  public void setEndPointForUserById(List<Long> endPointForUserById) {
+  public void setEndPointForUserById(List<String> endPointForUserById) {
     this.endPointForUserById = endPointForUserById;
   }
 

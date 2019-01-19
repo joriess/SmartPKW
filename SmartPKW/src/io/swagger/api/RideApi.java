@@ -116,7 +116,7 @@ public class RideApi  {
         @io.swagger.annotations.ApiResponse(code = 503, message = "service or depending services unavailable", response = Void.class) })
     public Response createStops(@ApiParam(value = "create one or multiple stops" ,required=true) List<StopWithoutId> body
 ,@ApiParam(value = "rideId",required=true) @PathParam("rideId") Integer rideId
-,@ApiParam(value = "userId",required=true) @PathParam("userId") Long userId
+,@ApiParam(value = "userId",required=true) @PathParam("userId") String userId
 ,@Context SecurityContext securityContext)
     throws NotFoundException {
         return delegate.createStops(body,rideId,userId,securityContext);
@@ -180,7 +180,7 @@ public class RideApi  {
         @io.swagger.annotations.ApiResponse(code = 500, message = "internal server error", response = Void.class),
         
         @io.swagger.annotations.ApiResponse(code = 503, message = "service or depending services unavailable", response = Void.class) })
-    public Response deleteStops(@ApiParam(value = "All stops of the given userId will be deleted if nobody is using them to join or exit the ride.",required=true) @PathParam("userId") Long userId
+    public Response deleteStops(@ApiParam(value = "All stops of the given userId will be deleted if nobody is using them to join or exit the ride.",required=true) @PathParam("userId") String userId
 ,@ApiParam(value = "ID of the ride that needs to be fetched",required=true) @PathParam("rideId") Integer rideId
 ,@Context SecurityContext securityContext)
     throws NotFoundException {
@@ -272,7 +272,7 @@ public class RideApi  {
         
         @io.swagger.annotations.ApiResponse(code = 503, message = "service or depending services unavailable", response = Void.class) })
     public Response getStopsByRideIdAndUserId(@ApiParam(value = "ID of the ride that needs to be fetched",required=true) @PathParam("rideId") Integer rideId
-,@ApiParam(value = "ID of the user that is associated with the ride",required=true) @PathParam("userId") Long userId
+,@ApiParam(value = "ID of the user that is associated with the ride",required=true) @PathParam("userId") String userId
 ,@Context SecurityContext securityContext)
     throws NotFoundException {
         return delegate.getStopsByRideIdAndUserId(rideId,userId,securityContext);
@@ -375,7 +375,7 @@ public class RideApi  {
         @io.swagger.annotations.ApiResponse(code = 503, message = "service or depending services unavailable", response = Void.class) })
     public Response updateStops(@ApiParam(value = "update all stops (one or two) of a specific user" ,required=true) List<StopWithoutId> body
 ,@ApiParam(value = "rideId",required=true) @PathParam("rideId") Integer rideId
-,@ApiParam(value = "userId",required=true) @PathParam("userId") Long userId
+,@ApiParam(value = "userId",required=true) @PathParam("userId") String userId
 ,@Context SecurityContext securityContext)
     throws NotFoundException {
         return delegate.updateStops(body,rideId,userId,securityContext);

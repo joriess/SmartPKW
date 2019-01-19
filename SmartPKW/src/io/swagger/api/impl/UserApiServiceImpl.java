@@ -27,13 +27,13 @@ public class UserApiServiceImpl extends UserApiService {
 	DataAccess dataAccess = DataAccess.getInstance();
 	
     @Override
-    public Response createCar(Long userId, CarWithoutId body, SecurityContext securityContext) throws NotFoundException {
+    public Response createCar(String userId, CarWithoutId body, SecurityContext securityContext) throws NotFoundException {
         CarWithId response = dataAccess.createCar(body);
         return Response.status(201).entity(response).build();
     }
     
     @Override
-    public Response createReview(Long userId, ReviewWithoutId body, SecurityContext securityContext) throws NotFoundException {
+    public Response createReview(String userId, ReviewWithoutId body, SecurityContext securityContext) throws NotFoundException {
         // do some magic!
     	ReviewWithId response = dataAccess.createReview(body);
     	return Response.status(201).entity(response).build();
@@ -46,19 +46,19 @@ public class UserApiServiceImpl extends UserApiService {
     }
     
     @Override
-    public Response deleteCar(Long userId, Integer carId, SecurityContext securityContext) throws NotFoundException {
+    public Response deleteCar(String userId, Integer carId, SecurityContext securityContext) throws NotFoundException {
         dataAccess.deleteCar(carId);
         return Response.status(204).build();
     }
     
     @Override
-    public Response deleteReview(Long userId, Integer reviewId, SecurityContext securityContext) throws NotFoundException {
+    public Response deleteReview(String userId, Integer reviewId, SecurityContext securityContext) throws NotFoundException {
         dataAccess.deleteReview(reviewId);
         return Response.status(204).build();
     }
     
     @Override
-    public Response deleteUser(Long userId, SecurityContext securityContext) throws NotFoundException {
+    public Response deleteUser(String userId, SecurityContext securityContext) throws NotFoundException {
         // do some magic!
         return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
     }
@@ -70,7 +70,7 @@ public class UserApiServiceImpl extends UserApiService {
     }
     
     @Override
-    public Response getCarsByUserId(Long userId, SecurityContext securityContext) throws NotFoundException {
+    public Response getCarsByUserId(String userId, SecurityContext securityContext) throws NotFoundException {
         List<CarWithId> response = dataAccess.getCarsByUserId(userId);
         return Response.status(200).entity(response).build();
     }
@@ -82,19 +82,19 @@ public class UserApiServiceImpl extends UserApiService {
     }
     
     @Override
-    public Response getReviewsByUserId(Long userId, Integer reviewId, SecurityContext securityContext) throws NotFoundException {
+    public Response getReviewsByUserId(String userId, Integer reviewId, SecurityContext securityContext) throws NotFoundException {
     	List<ReviewWithId> response = dataAccess.getReviewByUserId(userId);
     	return Response.status(200).entity(response).build();
     }
     
     @Override
-    public Response getUserByName(Long userId, SecurityContext securityContext) throws NotFoundException {
+    public Response getUserByName(String userId, SecurityContext securityContext) throws NotFoundException {
         // do some magic!
         return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
     }
     
     @Override
-    public Response loginUser( @NotNull Long userId,  @NotNull String password, SecurityContext securityContext) throws NotFoundException {
+    public Response loginUser( @NotNull String userId,  @NotNull String password, SecurityContext securityContext) throws NotFoundException {
         GoogleAPIService googleAPI = GoogleAPIService.getInstance();
         String body = googleAPI.testConnection();
         //String body = googleAPI.route("Roonstraße 8, 95615 Marktredwitz", "Fliederstraße 14, 92637 Weiden");
@@ -107,7 +107,7 @@ public class UserApiServiceImpl extends UserApiService {
         return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, body)).build();
     }
     @Override
-    public Response updateCar(Long userId, Integer carId, CarWithoutId body, SecurityContext securityContext) throws NotFoundException {
+    public Response updateCar(String userId, Integer carId, CarWithoutId body, SecurityContext securityContext) throws NotFoundException {
         CarWithId response = dataAccess.updateCar(carId, body);
         if(response != null)
         {
@@ -116,7 +116,7 @@ public class UserApiServiceImpl extends UserApiService {
         return Response.status(404).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "CarId not found")).build();
     }
     @Override
-    public Response updateReview(Long userId, Integer reviewId, ReviewWithoutId body, SecurityContext securityContext) throws NotFoundException {
+    public Response updateReview(String userId, Integer reviewId, ReviewWithoutId body, SecurityContext securityContext) throws NotFoundException {
         ReviewWithId response = dataAccess.updateReview(reviewId, body);
         if(response != null)
         {
@@ -125,7 +125,7 @@ public class UserApiServiceImpl extends UserApiService {
         return Response.status(404).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "ReviewId not found")).build();
     }
     @Override
-    public Response updateUser(Long userId, UserWithId body, SecurityContext securityContext) throws NotFoundException {
+    public Response updateUser(String userId, UserWithId body, SecurityContext securityContext) throws NotFoundException {
         UserWithId response = dataAccess.updateUser(userId, body);
         if(response != null)
         {

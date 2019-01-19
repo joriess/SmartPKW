@@ -28,7 +28,7 @@ import javax.validation.constraints.*;
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2019-01-09T18:17:56.749Z")
 public class RideWithoutId   {
   @JsonProperty("createdByUserById")
-  private Long createdByUserById = null;
+  private String createdByUserById = null;
 
   @JsonProperty("createdOn")
   private Date createdOn = null;
@@ -75,7 +75,7 @@ public class RideWithoutId   {
   @JsonProperty("carById")
   private Integer carById = null;
 
-  public RideWithoutId createdByUserById(Long createdByUserById) {
+  public RideWithoutId createdByUserById(String createdByUserById) {
     this.createdByUserById = createdByUserById;
     return this;
   }
@@ -87,11 +87,11 @@ public class RideWithoutId   {
   @JsonProperty("createdByUserById")
   @ApiModelProperty(required = true, value = "")
   @NotNull
-  public Long getCreatedByUserById() {
+  public String getCreatedByUserById() {
     return createdByUserById;
   }
 
-  public void setCreatedByUserById(Long createdByUserById) {
+  public void setCreatedByUserById(String createdByUserById) {
     this.createdByUserById = createdByUserById;
   }
 

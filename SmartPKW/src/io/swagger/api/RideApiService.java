@@ -22,13 +22,13 @@ import javax.validation.constraints.*;
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2019-01-09T18:17:56.749Z")
 public abstract class RideApiService {
     public abstract Response createRide(RideWithoutId body,SecurityContext securityContext) throws NotFoundException;
-    public abstract Response createStops(List<StopWithoutId> body,Integer rideId,Long userId,SecurityContext securityContext) throws NotFoundException;
+    public abstract Response createStops(List<StopWithoutId> body,Integer rideId,String userId,SecurityContext securityContext) throws NotFoundException;
     public abstract Response deleteRide(Integer rideId,SecurityContext securityContext) throws NotFoundException;
-    public abstract Response deleteStops(Long userId,Integer rideId,SecurityContext securityContext) throws NotFoundException;
+    public abstract Response deleteStops(String userId,Integer rideId,SecurityContext securityContext) throws NotFoundException;
     public abstract Response getRideByRideId(Integer rideId,SecurityContext securityContext) throws NotFoundException;
     public abstract Response getStopsByRideId(Integer rideId,SecurityContext securityContext) throws NotFoundException;
-    public abstract Response getStopsByRideIdAndUserId(Integer rideId,Long userId,SecurityContext securityContext) throws NotFoundException;
+    public abstract Response getStopsByRideIdAndUserId(Integer rideId,String userId,SecurityContext securityContext) throws NotFoundException;
     public abstract Response searchRides( String toAddress, String fromTimestamp, String toTimestamp,SecurityContext securityContext) throws NotFoundException;
     public abstract Response updateRide(Integer rideId,RideWithoutId body,SecurityContext securityContext) throws NotFoundException;
-    public abstract Response updateStops(List<StopWithoutId> body,Integer rideId,Long userId,SecurityContext securityContext) throws NotFoundException;
+    public abstract Response updateStops(List<StopWithoutId> body,Integer rideId,String userId,SecurityContext securityContext) throws NotFoundException;
 }

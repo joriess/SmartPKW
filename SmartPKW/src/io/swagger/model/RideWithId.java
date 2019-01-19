@@ -31,7 +31,7 @@ public class RideWithId   {
   private Integer rideId = null;
 
   @JsonProperty("createdByUserById")
-  private Long createdByUserById = null;
+  private String createdByUserById = null;
 
   @JsonProperty("createdOn")
   private Date createdOn = null;
@@ -98,7 +98,7 @@ public class RideWithId   {
     this.rideId = rideId;
   }
 
-  public RideWithId createdByUserById(Long createdByUserById) {
+  public RideWithId createdByUserById(String createdByUserById) {
     this.createdByUserById = createdByUserById;
     return this;
   }
@@ -110,11 +110,11 @@ public class RideWithId   {
   @JsonProperty("createdByUserById")
   @ApiModelProperty(required = true, value = "")
   @NotNull
-  public Long getCreatedByUserById() {
+  public String getCreatedByUserById() {
     return createdByUserById;
   }
 
-  public void setCreatedByUserById(Long createdByUserById) {
+  public void setCreatedByUserById(String createdByUserById) {
     this.createdByUserById = createdByUserById;
   }
 

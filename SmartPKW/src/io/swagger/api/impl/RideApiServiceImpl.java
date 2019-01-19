@@ -26,7 +26,7 @@ public class RideApiServiceImpl extends RideApiService {
         return Response.status(201).entity(response).build();
     }
     @Override
-    public Response createStops(List<StopWithoutId> body, Integer rideId, Long userId, SecurityContext securityContext) throws NotFoundException {
+    public Response createStops(List<StopWithoutId> body, Integer rideId, String userId, SecurityContext securityContext) throws NotFoundException {
         List<StopWithId> response = dataAccess.createStops(body);
         return Response.status(201).entity(response).build();
     }
@@ -36,7 +36,7 @@ public class RideApiServiceImpl extends RideApiService {
     	return Response.status(204).build();
     }
     @Override
-    public Response deleteStops(Long userId, Integer rideId, SecurityContext securityContext) throws NotFoundException {
+    public Response deleteStops(String userId, Integer rideId, SecurityContext securityContext) throws NotFoundException {
         dataAccess.deleteStops(rideId, userId);
     	return Response.status(204).build();
     }
@@ -51,7 +51,7 @@ public class RideApiServiceImpl extends RideApiService {
     	return Response.status(200).entity(response).build();
     }
     @Override
-    public Response getStopsByRideIdAndUserId(Integer rideId, Long userId, SecurityContext securityContext) throws NotFoundException {
+    public Response getStopsByRideIdAndUserId(Integer rideId, String userId, SecurityContext securityContext) throws NotFoundException {
     	List<StopWithId> response = dataAccess.getStopsByRideIdAndUserId(rideId, userId);
     	return Response.status(200).entity(response).build();
     }
@@ -66,7 +66,7 @@ public class RideApiServiceImpl extends RideApiService {
         return Response.status(200).entity(response).build();
     }
     @Override
-    public Response updateStops(List<StopWithoutId> body, Integer rideId, Long userId, SecurityContext securityContext) throws NotFoundException {
+    public Response updateStops(List<StopWithoutId> body, Integer rideId, String userId, SecurityContext securityContext) throws NotFoundException {
         StopWithId response = dataAccess.updateStop(userId, body);
         return Response.status(200).entity(response).build();
     }

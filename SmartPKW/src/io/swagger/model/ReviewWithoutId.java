@@ -33,10 +33,10 @@ public class ReviewWithoutId   {
   private String comment = null;
 
   @JsonProperty("createdByUserById")
-  private Long createdByUserById = null;
+  private String createdByUserById = null;
 
   @JsonProperty("createdForUserById")
-  private Long createdForUserById = null;
+  private String createdForUserById = null;
 
   @JsonProperty("createdOn")
   private Date createdOn = null;
@@ -80,7 +80,7 @@ public class ReviewWithoutId   {
     this.comment = comment;
   }
 
-  public ReviewWithoutId createdByUserById(Long createdByUserById) {
+  public ReviewWithoutId createdByUserById(String createdByUserById) {
     this.createdByUserById = createdByUserById;
     return this;
   }
@@ -92,15 +92,15 @@ public class ReviewWithoutId   {
   @JsonProperty("createdByUserById")
   @ApiModelProperty(required = true, value = "")
   @NotNull
-  public Long getCreatedByUserById() {
+  public String getCreatedByUserById() {
     return createdByUserById;
   }
 
-  public void setCreatedByUserById(Long createdByUserById) {
+  public void setCreatedByUserById(String createdByUserById) {
     this.createdByUserById = createdByUserById;
   }
 
-  public ReviewWithoutId createdForUserById(Long createdForUserById) {
+  public ReviewWithoutId createdForUserById(String createdForUserById) {
     this.createdForUserById = createdForUserById;
     return this;
   }
@@ -112,11 +112,11 @@ public class ReviewWithoutId   {
   @JsonProperty("createdForUserById")
   @ApiModelProperty(required = true, value = "")
   @NotNull
-  public Long getCreatedForUserById() {
+  public String getCreatedForUserById() {
     return createdForUserById;
   }
 
-  public void setCreatedForUserById(Long createdForUserById) {
+  public void setCreatedForUserById(String createdForUserById) {
     this.createdForUserById = createdForUserById;
   }
 

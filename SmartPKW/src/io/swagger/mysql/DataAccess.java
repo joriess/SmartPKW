@@ -89,7 +89,7 @@ public class DataAccess {
 			myRs.next();
 			
 			rideWithId.setCarById(myRs.getInt("carById"));
-			rideWithId.setCreatedByUserById(myRs.getLong("createdByUserById"));
+			rideWithId.setCreatedByUserById(myRs.getString("createdByUserById"));
 			rideWithId.setCreatedOn(myRs.getDate("createdOn"));
 			rideWithId.setDescription(myRs.getString("description"));
 			rideWithId.setRideId(myRs.getInt("rideId"));
@@ -115,7 +115,7 @@ public class DataAccess {
 	      try {
 			PreparedStatement preparedStmt = myConn.prepareStatement(query);
 			  preparedStmt.setInt (1, rideWithoutId.getCarById());
-			  preparedStmt.setLong (2, rideWithoutId.getCreatedByUserById());
+			  preparedStmt.setString (2, rideWithoutId.getCreatedByUserById());
 			  preparedStmt.setDate   (3, (Date) rideWithoutId.getCreatedOn());
 			  preparedStmt.setString	(4, rideWithoutId.getDescription());
 			  preparedStmt.setString   (5, rideWithoutId.getStatus().toString());
@@ -139,7 +139,7 @@ public class DataAccess {
 		try {
 			PreparedStatement preparedStmt = myConn.prepareStatement(query);
 		      preparedStmt.setInt (1, rideWithoutId.getCarById());
-		      preparedStmt.setLong (2, rideWithoutId.getCreatedByUserById());
+		      preparedStmt.setString (2, rideWithoutId.getCreatedByUserById());
 		      preparedStmt.setDate   (3, (Date) rideWithoutId.getCreatedOn());
 		      preparedStmt.setString	(4, rideWithoutId.getDescription());
 		      preparedStmt.setString   (5, rideWithoutId.getStatus().toString());
@@ -202,7 +202,7 @@ public class DataAccess {
 			myRs.next();
 			
 			stopWithId.setAddress(myRs.getString("address"));
-			stopWithId.setCreatedByUserById(myRs.getInt("createdByUserById"));
+			stopWithId.setCreatedByUserById(myRs.getString("createdByUserById"));
 			stopWithId.setCreatedForRideById(myRs.getInt("createdForRideById"));
 			//stopWithId.setEndPointForUserById(myRs.getLong("endPointForUserById"));
 			stopWithId.setLatitude(myRs.getInt("latitude"));
@@ -227,7 +227,7 @@ public class DataAccess {
 			
 			while(myRs.next()) {	
 				stopWithId.setAddress(myRs.getString("address"));
-				stopWithId.setCreatedByUserById(myRs.getInt("createdByUserById"));
+				stopWithId.setCreatedByUserById(myRs.getString("createdByUserById"));
 				stopWithId.setCreatedForRideById(myRs.getInt("createdForRideById"));
 				//stopWithId.setEndPointForUserById(myRs.getLong("endPointForUserById"));
 				stopWithId.setLatitude(myRs.getInt("latitude"));
@@ -246,14 +246,14 @@ public class DataAccess {
 		}			
 		
 	}
-	public StopWithId getStopsByRideIdAndUserId(int rideId, int userId) {
+	public StopWithId getStopsByRideIdAndUserId(int rideId, String userId) {
 		
 		return null;
 	}
-	public StopWithId getStopsByUserId(int userId) {
+	public StopWithId getStopsByUserId(String userId) {
 		return null;
 	}
-	public StopWithId createStop(StopWithoutId stopWithoutId) {
+	public StopWithId createStops(List<StopWithoutId> stopsWithoutId) {
 		return null;
 	}
 	public StopWithId updateStop(int stopId, StopWithoutId stopWithoutId) {
@@ -268,7 +268,7 @@ public class DataAccess {
 	public CarWithId getCarById(int carId) {
 		return null;
 	}
-	public CarWithId getCarsByUserId(int userId) {
+	public List<CarWithId> getCarsByUserId(String userId) {
 		return null;
 	}
 	public CarWithId createCar(CarWithoutId carWithoutId) {
@@ -285,7 +285,7 @@ public class DataAccess {
 	public ReviewWithId getReviewById(int reviewId) {
 		return null;
 	}
-	public ReviewWithId getReviewsByUserId(int userId) {
+	public ReviewWithId getReviewsByUserId(String userId) {
 		//Id des Users für den die Reviews gemacht wurden
 		return null;
 	}
