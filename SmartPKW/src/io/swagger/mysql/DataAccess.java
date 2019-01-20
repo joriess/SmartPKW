@@ -46,6 +46,7 @@ public class DataAccess {
 		String password = "";
 		
 		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
 			// 1. Get a connection to Database
 			myConn = DriverManager.getConnection(url, username, password);
 			//2. Create Statement
@@ -53,12 +54,13 @@ public class DataAccess {
 			
 			//3. Execute SQL query
 			myRs = myStmt.executeQuery("select * from User");
-			getRideById(2);
+			//getRideById(2);
 			//4. Process result set
 			/*while (myRs.next()) {
 				System.out.println(myRs.getString("userName"));
 				System.out.println(myRs.getString("userId"));
 			}*/
+			//System.out.println("Connection steht");
 			
 		} catch(Exception exc) {
 			exc.printStackTrace();
@@ -430,7 +432,7 @@ public class DataAccess {
 		}
 		public ReviewWithId createReview(ReviewWithoutId reviewWithoutId) {
 			// the mysql insert statement
-		      String query = "`INSERT SmartPKW`.`Review` " +  		
+		      String query = "INSERT INTO `SmartPKW`.`Review` " +  		
 		      		"(`rating`," + 
 		      		"`comment`," + 
 		      		"`createdByUserById`," + 
@@ -441,23 +443,29 @@ public class DataAccess {
 		      // create the mysql insert preparedstatement
 		      try {
 				PreparedStatement preparedStmt = myConn.prepareStatement(query);
+				System.out.println(reviewWithoutId.getRating());
 				  preparedStmt.setLong (1, reviewWithoutId.getRating());
 				  preparedStmt.setString (2, reviewWithoutId.getComment());
 				  preparedStmt.setString   (3, reviewWithoutId.getCreatedByUserById());
 				  preparedStmt.setString	(4, reviewWithoutId.getCreatedForUserById());
 				  preparedStmt.setDate(5, (Date) reviewWithoutId.getCreatedOn());
 				  //createdOn .. automatisch?
-				  
+				  //System.out.println(preparedStmt);
 				  // execute the preparedstatement
 				  preparedStmt.execute();
-				  
+				  myRs = myStmt.executeQuery("SELECT LAST_INSERT_ID();");
+				  if(myRs.next())
+				  {
+					  return getReviewById(myRs.getInt("LAST_INSERT_ID()"));
+				  }
+				  return null;
 				  
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 				return null;
 			}
-			return null;
+		    
 		}
 		public ReviewWithId updateReview(int reviewId, ReviewWithoutId reviewWithoutId) {
 			// the mysql insert statement
@@ -525,7 +533,18 @@ public class DataAccess {
 	}
 
 	public boolean userExists(String userId) {
-		// TODO Auto-generated method stub
+		try {
+			myRs = myStmt.executeQuery("select * from User where userId = "+ userId);
+			if(myRs.next() == true)
+			{
+				return true;
+			}
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		return false;
 	}
 
