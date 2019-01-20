@@ -31,11 +31,11 @@ public abstract class UserApiService {
     public abstract Response getCarByCarId(Integer carId,SecurityContext securityContext) throws NotFoundException;
     public abstract Response getCarsByUserId(String userId,SecurityContext securityContext) throws NotFoundException;
     public abstract Response getReviewByReviewId(Integer reviewId,SecurityContext securityContext) throws NotFoundException;
-    public abstract Response getReviewsByUserId(String userId,Integer reviewId,SecurityContext securityContext) throws NotFoundException;
-    public abstract Response getUserByName(String userId,SecurityContext securityContext) throws NotFoundException;
+    public abstract Response getReviewsByUserId(String userId,SecurityContext securityContext) throws NotFoundException;
+    public abstract Response getUserById(String userId,SecurityContext securityContext) throws NotFoundException;
     public abstract Response loginUser( @NotNull String userId, @NotNull String password,SecurityContext securityContext) throws NotFoundException;
     public abstract Response logoutUser(SecurityContext securityContext) throws NotFoundException;
     public abstract Response updateCar(String userId,Integer carId,CarWithoutId body,SecurityContext securityContext) throws NotFoundException;
     public abstract Response updateReview(String userId,Integer reviewId,ReviewWithoutId body,SecurityContext securityContext) throws NotFoundException;
-    public abstract Response updateUser(String userId,UserWithId body,SecurityContext securityContext) throws NotFoundException;
+    public abstract Response updateUser(String userId,UserWithoutId body,SecurityContext securityContext) throws NotFoundException;
 }

@@ -303,11 +303,11 @@ public class RideApi  {
         
         @io.swagger.annotations.ApiResponse(code = 503, message = "service or depending services unavailable", response = Void.class) })
     public Response searchRides(@ApiParam(value = "The time until which rides are searched.") @QueryParam("ToAddress") String toAddress
-,@ApiParam(value = "The time from which rides are searched.") @QueryParam("fromTimestamp") String fromTimestamp
+, @QueryParam("ToAddress") String fromAddress, @ApiParam(value = "The time from which rides are searched.") @QueryParam("fromTimestamp") String fromTimestamp
 ,@ApiParam(value = "address of type string") @QueryParam("toTimestamp") String toTimestamp
 ,@Context SecurityContext securityContext)
     throws NotFoundException {
-        return delegate.searchRides(toAddress,fromTimestamp,toTimestamp,securityContext);
+        return delegate.searchRides(fromAddress, toAddress,fromTimestamp,toTimestamp,securityContext);
     }
     @PUT
     @Path("/{rideId}")

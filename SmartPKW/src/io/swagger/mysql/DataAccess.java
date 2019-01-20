@@ -82,7 +82,7 @@ public class DataAccess {
 	}
 	
 	
-	public RideWithId getRideById(int rideId) throws InterruptedException {
+	public RideWithId getRideById(int rideId) {
 		try {
 			myRs = myStmt.executeQuery("select * from Ride where rideId = "+rideId);			
 			RideWithId rideWithId = new RideWithId();
@@ -162,7 +162,7 @@ public class DataAccess {
 		}
 		
 	}
-	public List<RideWithId> searchRides(String toAddress, String fromAddress, Date startDate, Date endDate) {
+	public List<RideWithId> searchRides(String toAddress, String fromAddress, String startDate, String endDate) {
 
 		String mySQLstartDate = formatter.format(startDate);
 		String mySQLendDate = formatter.format(endDate);
@@ -246,57 +246,292 @@ public class DataAccess {
 		}			
 		
 	}
-	public StopWithId getStopsByRideIdAndUserId(int rideId, String userId) {
+	public List<StopWithId> getStopsByRideIdAndUserId(int rideId, String userId) {
 		
 		return null;
 	}
 	public StopWithId getStopsByUserId(String userId) {
 		return null;
 	}
-	public StopWithId createStops(List<StopWithoutId> stopsWithoutId) {
+	public List<StopWithId> createStops(List<StopWithoutId> stopsWithoutId) {
 		return null;
 	}
-	public StopWithId updateStop(int stopId, StopWithoutId stopWithoutId) {
+	public StopWithId updateStop(int rideId, String userId, List<StopWithoutId> stopsWithoutId) {
 		return null;
 	}
-	public void deleteStop(int stopId) {
+	public void deleteStops(int rideId, String userId) {
 
 	}
 	
 	
-	//--CAR-- Methods
-	public CarWithId getCarById(int carId) {
-		return null;
-	}
-	public List<CarWithId> getCarsByUserId(String userId) {
-		return null;
-	}
-	public CarWithId createCar(CarWithoutId carWithoutId) {
-		return null;
-	}
-	public CarWithId updateCar(int carId, CarWithoutId carWithoutId) {
-		return null;
-	}
-	public void deleteCar(int carId) {
-	}
-
+	//--CAR-- Methods ---------------------------------------------------------------------------------------------------------------------
 	
-	//--REVIEW-- Methods
-	public ReviewWithId getReviewById(int reviewId) {
-		return null;
-	}
-	public ReviewWithId getReviewsByUserId(String userId) {
-		//Id des Users für den die Reviews gemacht wurden
-		return null;
-	}
-	public ReviewWithId createReview(ReviewWithoutId reviewWithId) {
-		return null;
-	}
-	public ReviewWithId updateReview(int reviewId, ReviewWithoutId reviewWithoutId) {
-		return null;
-	}
-	public void deleteReview(int reviewId) {
+		public CarWithId.TrunkspaceEnum enumSwitcherCar (String enumString) {
+			switch (enumString) {
+			case "LARGE":
+				return CarWithId.TrunkspaceEnum.LARGE;
+			case "MEDIUM":
+				return CarWithId.TrunkspaceEnum.MEDIUM;
+			case "SMALL":
+				return CarWithId.TrunkspaceEnum.SMALL;
+			}
+			return null;
+		}
 		
+		
+		public CarWithId getCarById(int carId) {
+			try {
+				myRs = myStmt.executeQuery("select * from Stop where carId = "+ carId);			
+				CarWithId carWithId = new CarWithId();
+				myRs.next();
+				
+				carWithId.setCreatedByUserById(myRs.getString("createdByUserById"));
+				carWithId.setDescription("description");
+				carWithId.setSeats(myRs.getInt("seats"));
+				carWithId.setTrunkspace(enumSwitcherCar(myRs.getString("trunkspace")));
+				
+				return carWithId;
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return null;
+			}
+		}
+		public List<CarWithId> getCarsByUserId(String userId) {
+			try {
+				myRs = myStmt.executeQuery("select * from Stop where createdByUserById = "+ userId);
+				List<CarWithId> carsWithId = new ArrayList<CarWithId>();
+				while (myRs.next()) {
+					CarWithId carWithId = new CarWithId();
+
+					carWithId.setCreatedByUserById(myRs.getString("createdByUserById"));
+					carWithId.setDescription("description");
+					carWithId.setSeats(myRs.getInt("seats"));
+					carWithId.setTrunkspace(enumSwitcherCar(myRs.getString("trunkspace")));
+					
+					carsWithId.add(carWithId);
+				}
+				return carsWithId;
+				
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return null;
+			}
+		}
+		public CarWithId createCar(CarWithoutId carWithoutId) {
+			// the mysql insert statement
+		      String query = " insert into User (createdByUserById, description, seats, trunkspace)"
+		        + " values (?, ?, ?, ?)";
+
+		      // create the mysql insert preparedstatement
+		      try {
+				PreparedStatement preparedStmt = myConn.prepareStatement(query);
+				  preparedStmt.setString (1, carWithoutId.getCreatedByUserById());
+				  preparedStmt.setString (2, carWithoutId.getDescription());
+				  preparedStmt.setInt   (3, carWithoutId.getSeats());
+				  preparedStmt.setString	(4, carWithoutId.getTrunkspace().toString());
+				  
+				  // execute the preparedstatement
+				  preparedStmt.execute();
+				  return null;
+				  
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return null;
+			}
+		}
+		public CarWithId updateCar(int carId, CarWithoutId carWithoutId) {
+			// the mysql insert statement
+		     /* String query = "insert into User where cardId = "+carId+"(createdByUserById, description, seats, trunkspace)"
+		        + " values (?, ?, ?, ?)";*/
+			
+			String query = "UPDATE Car SET createdByUserById = ?, description = ?, seats = ?, trunkspace = ? WHERE userId ="+ carId;
+
+		      // create the mysql insert preparedstatement
+		      try {
+				PreparedStatement preparedStmt = myConn.prepareStatement(query);
+				  preparedStmt.setString (1, carWithoutId.getCreatedByUserById());
+				  preparedStmt.setString (2, carWithoutId.getDescription());
+				  preparedStmt.setInt   (3, carWithoutId.getSeats());
+				  preparedStmt.setString	(4, carWithoutId.getTrunkspace().toString());
+				  
+				  // execute the preparedstatement
+				  preparedStmt.execute();
+				  
+				  // TODO Car wird noch nicht zurück gegeben weil aufwendig, weiß nicht ob das nötig ist.
+				  return null;
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return null;
+			}	
+		 }
+		
+		public void deleteCar(int carId) {
+			try {
+				myStmt.executeUpdate("DELETE FROM Car WHERE carId = "+carId);
+			} catch (SQLException e) {
+				
+				e.printStackTrace();
+			}
+			
+		}
+
+		
+		
+		//--REVIEW-- Methods------------------------------------------------------------------------------------------------------------------------
+		public ReviewWithId getReviewById(int reviewId) {
+			try {
+				myRs = myStmt.executeQuery("select * from Review where reviewId = "+ reviewId);			
+				ReviewWithId reviewWithId = new ReviewWithId();
+				myRs.next();
+				
+				reviewWithId.setComment(myRs.getString("comment"));
+				reviewWithId.setCreatedByUserById(myRs.getString("createdByUserById"));
+				reviewWithId.setCreatedForUserById(myRs.getString("createdForUserById"));
+				reviewWithId.setCreatedOn(myRs.getDate("createdOn"));
+				reviewWithId.setRating(myRs.getInt("rating"));
+				reviewWithId.setReviewId(myRs.getInt("reviewId"));
+				
+				return reviewWithId;
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return null;
+			}
+		}
+		public List<ReviewWithId> getReviewsByUserId(String userId) {
+			//Id des Users für den die Reviews gemacht wurden
+			try {
+				myRs = myStmt.executeQuery("select * from Stop where createdByUserById = "+ userId);
+				List<ReviewWithId> reviewsWithId = new ArrayList<ReviewWithId>();
+				while(myRs.next()) {
+					ReviewWithId reviewWithId = new ReviewWithId();
+					
+					reviewWithId.setComment(myRs.getString("comment"));
+					reviewWithId.setCreatedByUserById(myRs.getString("createdByUserById"));
+					reviewWithId.setCreatedForUserById(myRs.getString("createdForUserById"));
+					reviewWithId.setCreatedOn(myRs.getDate("createdOn"));
+					reviewWithId.setRating(myRs.getInt("rating"));
+					reviewWithId.setReviewId(myRs.getInt("reviewId"));
+					
+					reviewsWithId.add(reviewWithId);
+				}
+				
+				return reviewsWithId;
+				
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return null;
+			}
+		}
+		public ReviewWithId createReview(ReviewWithoutId reviewWithoutId) {
+			// the mysql insert statement
+		      String query = "`INSERT SmartPKW`.`Review` " +  		
+		      		"(`rating`," + 
+		      		"`comment`," + 
+		      		"`createdByUserById`," + 
+		      		"`createdForUserById`," + 
+		      		"`createdOn`)"
+		      		+ " values (?, ?, ?, ?, ?)";
+
+		      // create the mysql insert preparedstatement
+		      try {
+				PreparedStatement preparedStmt = myConn.prepareStatement(query);
+				  preparedStmt.setLong (1, reviewWithoutId.getRating());
+				  preparedStmt.setString (2, reviewWithoutId.getComment());
+				  preparedStmt.setString   (3, reviewWithoutId.getCreatedByUserById());
+				  preparedStmt.setString	(4, reviewWithoutId.getCreatedForUserById());
+				  preparedStmt.setDate(5, (Date) reviewWithoutId.getCreatedOn());
+				  //createdOn .. automatisch?
+				  
+				  // execute the preparedstatement
+				  preparedStmt.execute();
+				  
+				  
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return null;
+			}
+			return null;
+		}
+		public ReviewWithId updateReview(int reviewId, ReviewWithoutId reviewWithoutId) {
+			// the mysql insert statement
+		     /* String query = "insert into User where cardId = "+carId+"(createdByUserById, description, seats, trunkspace)"
+		        + " values (?, ?, ?, ?)";*/
+			
+			String query = "UPDATE `SmartPKW`.`Review` " + 
+					"SET" + 
+					"`reviewId` = ?," + 
+					"`rating` = ?," + 
+					"`comment` = ?," + 
+					"`createdByUserById` = ?," + 
+					"`createdForUserById` = ?," + 
+					"`createdOn` = ? WHERE reviewId ="+ reviewId;
+
+		      // create the mysql insert preparedstatement
+		      try {
+		    	  PreparedStatement preparedStmt = myConn.prepareStatement(query);
+				  preparedStmt.setLong (1, reviewWithoutId.getRating());
+				  preparedStmt.setString (2, reviewWithoutId.getComment());
+				  preparedStmt.setString   (3, reviewWithoutId.getCreatedByUserById());
+				  preparedStmt.setString	(4, reviewWithoutId.getCreatedForUserById());
+				  preparedStmt.setDate(5, (Date) reviewWithoutId.getCreatedOn());
+				  
+				  // execute the preparedstatement
+				  preparedStmt.execute();
+				  
+				  // TODO Car wird noch nicht zurück gegeben weil aufwendig, weiß nicht ob das nötig ist.
+				  
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return null;
+			}	
+			return null;
+		}
+		public void deleteReview(int reviewId) {
+			try {
+				myStmt.executeUpdate("DELETE FROM Review WHERE reviewId = "+reviewId);
+			} catch (SQLException e) {
+				
+				e.printStackTrace();
+			}
+		}
+
+	
+
+	
+	//--User-- Methods
+	public UserWithId updateUser(String userId, UserWithoutId userWithoutId)
+	{
+		return null;
+	}
+
+	
+	//--Exists-- Methods
+	public boolean carExists(Integer carId) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean reviewExists(Integer reviewId) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean userExists(String userId) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public UserWithId getUserById(String userId) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

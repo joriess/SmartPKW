@@ -86,9 +86,10 @@ public class GoogleAPIService {
 		return gson.toJson(results.routes.toString());
 	}
 	
-	public String testConnection()
+	@GET
+	public void testConnection()
 	{
-		return Driver.startup();
+		DataAccess.getInstance();
 	}
 	
 	public String distance(String[] lat, String[] lng)

@@ -28,7 +28,7 @@ public abstract class RideApiService {
     public abstract Response getRideByRideId(Integer rideId,SecurityContext securityContext) throws NotFoundException;
     public abstract Response getStopsByRideId(Integer rideId,SecurityContext securityContext) throws NotFoundException;
     public abstract Response getStopsByRideIdAndUserId(Integer rideId,String userId,SecurityContext securityContext) throws NotFoundException;
-    public abstract Response searchRides( String toAddress, String fromTimestamp, String toTimestamp,SecurityContext securityContext) throws NotFoundException;
+    public abstract Response searchRides(String fromAddress, String toAddress, String fromTimestamp, String toTimestamp,SecurityContext securityContext) throws NotFoundException;
     public abstract Response updateRide(Integer rideId,RideWithoutId body,SecurityContext securityContext) throws NotFoundException;
     public abstract Response updateStops(List<StopWithoutId> body,Integer rideId,String userId,SecurityContext securityContext) throws NotFoundException;
 }

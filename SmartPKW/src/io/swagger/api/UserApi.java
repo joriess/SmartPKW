@@ -381,10 +381,9 @@ public class UserApi  {
         
         @io.swagger.annotations.ApiResponse(code = 503, message = "service or depending services unavailable", response = Void.class) })
     public Response getReviewsByUserId(@ApiParam(value = "The id of the user whichs review need to be fetched.",required=true) @PathParam("userId") String userId
-,@ApiParam(value = "The id of the review that needs to be fetched",required=true) @PathParam("reviewId") Integer reviewId
 ,@Context SecurityContext securityContext)
     throws NotFoundException {
-        return delegate.getReviewsByUserId(userId,reviewId,securityContext);
+        return delegate.getReviewsByUserId(userId,securityContext);
     }
     @GET
     @Path("/{userId}")
@@ -418,7 +417,7 @@ public class UserApi  {
     public Response getUserByName(@ApiParam(value = "The id that needs to be fetched",required=true) @PathParam("userId") String userId
 ,@Context SecurityContext securityContext)
     throws NotFoundException {
-        return delegate.getUserByName(userId,securityContext);
+        return delegate.getUserById(userId,securityContext);
     }
     @GET
     @Path("/login")
@@ -590,7 +589,7 @@ public class UserApi  {
         
         @io.swagger.annotations.ApiResponse(code = 503, message = "service or depending services unavailable", response = Void.class) })
     public Response updateUser(@ApiParam(value = "name that need to be updated",required=true) @PathParam("userId") String userId
-,@ApiParam(value = "Updated user object" ,required=true) UserWithId body
+,@ApiParam(value = "Updated user object" ,required=true) UserWithoutId body
 ,@Context SecurityContext securityContext)
     throws NotFoundException {
         return delegate.updateUser(userId,body,securityContext);

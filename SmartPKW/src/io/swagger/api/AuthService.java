@@ -41,7 +41,7 @@ public class AuthService  {
 		//authcode as param
 		// (Receive authCode via HTTPS POST)
 
-
+		System.out.println(authResult);
 		if (requestedHeader == null) {
 		  // Without the `X-Requested-With` header, this request could be forged. Aborts.
 		}
@@ -81,7 +81,7 @@ public class AuthService  {
 		}
 
 		String accessToken = tokenResponse.getAccessToken();
-
+		System.out.println(accessToken);
 		/* Use access token to call API
 		GoogleCredential credential = new GoogleCredential().setAccessToken(accessToken);
 		Drive drive =
@@ -100,9 +100,11 @@ public class AuthService  {
 		}
 		GoogleIdToken.Payload payload = idToken.getPayload();
 		String userId = payload.getSubject();  // Use this value as a key to identify a user.
+		System.out.println(userId);
 		String email = payload.getEmail();
 		boolean emailVerified = Boolean.valueOf(payload.getEmailVerified());
 		String name = (String) payload.get("name");
+		System.out.println(name);
 		String pictureUrl = (String) payload.get("picture");
 		String locale = (String) payload.get("locale");
 		String familyName = (String) payload.get("family_name");

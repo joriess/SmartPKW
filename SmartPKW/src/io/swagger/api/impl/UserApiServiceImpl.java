@@ -28,13 +28,20 @@ public class UserApiServiceImpl extends UserApiService {
 	
     @Override
     public Response createCar(String userId, CarWithoutId body, SecurityContext securityContext) throws NotFoundException {
-        CarWithId response = dataAccess.createCar(body);
+        if(!dataAccess.userExists(userId))
+        {
+        	return Response.status(404).entity(new ApiResponseMessage(ApiResponseMessage.OK, "This user doesnt exist")).build();
+        }
+    	CarWithId response = dataAccess.createCar(body);
         return Response.status(201).entity(response).build();
     }
     
     @Override
     public Response createReview(String userId, ReviewWithoutId body, SecurityContext securityContext) throws NotFoundException {
-        // do some magic!
+        if(!dataAccess.userExists(userId))
+        {
+        	return Response.status(404).entity(new ApiResponseMessage(ApiResponseMessage.OK, "This user doesnt exist")).build();
+        }
     	ReviewWithId response = dataAccess.createReview(body);
     	return Response.status(201).entity(response).build();
     }
@@ -47,12 +54,21 @@ public class UserApiServiceImpl extends UserApiService {
     
     @Override
     public Response deleteCar(String userId, Integer carId, SecurityContext securityContext) throws NotFoundException {
-        dataAccess.deleteCar(carId);
+        if(!dataAccess.carExists(carId))
+        {
+        	return Response.status(404).entity(new ApiResponseMessage(ApiResponseMessage.OK, "This car doesnt exist")).build();
+        }
+    	
+    	dataAccess.deleteCar(carId);
         return Response.status(204).build();
     }
     
     @Override
     public Response deleteReview(String userId, Integer reviewId, SecurityContext securityContext) throws NotFoundException {
+        if(!dataAccess.reviewExists(reviewId))
+        {
+        	return Response.status(404).entity(new ApiResponseMessage(ApiResponseMessage.OK, "This review doesnt exist")).build();
+        }
         dataAccess.deleteReview(reviewId);
         return Response.status(204).build();
     }
@@ -65,40 +81,60 @@ public class UserApiServiceImpl extends UserApiService {
     
     @Override
     public Response getCarByCarId(Integer carId, SecurityContext securityContext) throws NotFoundException {
+        if(!dataAccess.carExists(carId))
+        {
+        	return Response.status(404).entity(new ApiResponseMessage(ApiResponseMessage.OK, "This car doesnt exist")).build();
+        }
         CarWithId response = dataAccess.getCarById(carId);
         return Response.status(200).entity(response).build();
     }
     
     @Override
     public Response getCarsByUserId(String userId, SecurityContext securityContext) throws NotFoundException {
+        if(!dataAccess.userExists(userId))
+        {
+        	return Response.status(404).entity(new ApiResponseMessage(ApiResponseMessage.OK, "This user doesnt exist")).build();
+        }
         List<CarWithId> response = dataAccess.getCarsByUserId(userId);
         return Response.status(200).entity(response).build();
     }
     
     @Override
     public Response getReviewByReviewId(Integer reviewId, SecurityContext securityContext) throws NotFoundException {
+        if(!dataAccess.reviewExists(reviewId))
+        {
+        	return Response.status(404).entity(new ApiResponseMessage(ApiResponseMessage.OK, "This review doesnt exist")).build();
+        }
     	ReviewWithId response = dataAccess.getReviewById(reviewId);
     	return Response.status(200).entity(response).build();
     }
     
     @Override
-    public Response getReviewsByUserId(String userId, Integer reviewId, SecurityContext securityContext) throws NotFoundException {
-    	List<ReviewWithId> response = dataAccess.getReviewByUserId(userId);
+    public Response getReviewsByUserId(String userId, SecurityContext securityContext) throws NotFoundException {
+        if(!dataAccess.userExists(userId))
+        {
+        	return Response.status(404).entity(new ApiResponseMessage(ApiResponseMessage.OK, "This user doesnt exist")).build();
+        }
+    	List<ReviewWithId> response = dataAccess.getReviewsByUserId(userId);
     	return Response.status(200).entity(response).build();
     }
     
     @Override
-    public Response getUserByName(String userId, SecurityContext securityContext) throws NotFoundException {
-        // do some magic!
-        return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
+    public Response getUserById(String userId, SecurityContext securityContext) throws NotFoundException {
+        if(!dataAccess.userExists(userId))
+        {
+        	return Response.status(404).entity(new ApiResponseMessage(ApiResponseMessage.OK, "This user doesnt exist")).build();
+        }
+        UserWithId response = dataAccess.getUserById(userId);
+        return Response.status(200).entity(response).build();
     }
     
     @Override
     public Response loginUser( @NotNull String userId,  @NotNull String password, SecurityContext securityContext) throws NotFoundException {
         GoogleAPIService googleAPI = GoogleAPIService.getInstance();
-        String body = googleAPI.testConnection();
+        googleAPI.testConnection();
         //String body = googleAPI.route("Roonstraße 8, 95615 Marktredwitz", "Fliederstraße 14, 92637 Weiden");
-        return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, body)).build();
+        return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "test")).build();
     }
     @Override
     public Response logoutUser(SecurityContext securityContext) throws NotFoundException {
@@ -125,7 +161,7 @@ public class UserApiServiceImpl extends UserApiService {
         return Response.status(404).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "ReviewId not found")).build();
     }
     @Override
-    public Response updateUser(String userId, UserWithId body, SecurityContext securityContext) throws NotFoundException {
+    public Response updateUser(String userId, UserWithoutId body, SecurityContext securityContext) throws NotFoundException {
         UserWithId response = dataAccess.updateUser(userId, body);
         if(response != null)
         {

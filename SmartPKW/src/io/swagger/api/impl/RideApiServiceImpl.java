@@ -56,8 +56,8 @@ public class RideApiServiceImpl extends RideApiService {
     	return Response.status(200).entity(response).build();
     }
     @Override
-    public Response searchRides( String toAddress,  String fromTimestamp,  String toTimestamp, SecurityContext securityContext) throws NotFoundException {
-    	List<RideWithId> response = dataAccess.searchRides(toAddress, fromTimestamp, toTimestamp);
+    public Response searchRides(String fromAddress, String toAddress,  String fromTimestamp,  String toTimestamp, SecurityContext securityContext) throws NotFoundException {
+    	List<RideWithId> response = dataAccess.searchRides(fromAddress, toAddress, fromTimestamp, toTimestamp);
     	return Response.status(200).entity(response).build();
     }
     @Override
@@ -67,7 +67,7 @@ public class RideApiServiceImpl extends RideApiService {
     }
     @Override
     public Response updateStops(List<StopWithoutId> body, Integer rideId, String userId, SecurityContext securityContext) throws NotFoundException {
-        StopWithId response = dataAccess.updateStop(userId, body);
+        StopWithId response = dataAccess.updateStop(rideId, userId, body);
         return Response.status(200).entity(response).build();
     }
 }

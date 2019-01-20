@@ -16,7 +16,6 @@ public class ApiResponseMessage {
     int code;
     String type;
     String message;
-    CarWithId carWithId;
 
     public ApiResponseMessage(){}
 
@@ -45,10 +44,6 @@ public class ApiResponseMessage {
         this.message = message;
     }
 
-    public ApiResponseMessage(int code, CarWithId message) {
-        this.code = code;
-        this.carWithId = message;
-	}
 
 	@XmlTransient
     public int getCode() {
