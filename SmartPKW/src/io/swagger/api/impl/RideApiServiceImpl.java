@@ -6,8 +6,6 @@ import io.swagger.mysql.DataAccess;
 
 import java.util.List;
 import java.util.List;
-import io.swagger.api.NotFoundException;
-
 import java.io.InputStream;
 
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
@@ -32,6 +30,10 @@ public class RideApiServiceImpl extends RideApiService {
     }
     @Override
     public Response deleteRide(Integer rideId, SecurityContext securityContext) throws NotFoundException {
+        if(!dataAccess.rideExists(rideId))
+        {
+        	return Response.status(404).entity(new ApiResponseMessage(ApiResponseMessage.OK, "This ride doesnt exist")).build();
+        }
         dataAccess.deleteRide(rideId); //404 beachten
     	return Response.status(204).build();
     }
@@ -42,16 +44,32 @@ public class RideApiServiceImpl extends RideApiService {
     }
     @Override
     public Response getRideByRideId(Integer rideId, SecurityContext securityContext) throws NotFoundException {
+        if(!dataAccess.rideExists(rideId))
+        {
+        	return Response.status(404).entity(new ApiResponseMessage(ApiResponseMessage.OK, "This ride doesnt exist")).build();
+        }
     	RideWithId response = dataAccess.getRideById(rideId);
     	return Response.status(200).entity(response).build();
     }
     @Override
     public Response getStopsByRideId(Integer rideId, SecurityContext securityContext) throws NotFoundException {
+        if(!dataAccess.rideExists(rideId))
+        {
+        	return Response.status(404).entity(new ApiResponseMessage(ApiResponseMessage.OK, "This ride doesnt exist")).build();
+        }
     	List<StopWithId> response = dataAccess.getStopsByRideId(rideId);
     	return Response.status(200).entity(response).build();
     }
     @Override
     public Response getStopsByRideIdAndUserId(Integer rideId, String userId, SecurityContext securityContext) throws NotFoundException {
+        if(!dataAccess.userExists(userId))
+        {
+        	return Response.status(404).entity(new ApiResponseMessage(ApiResponseMessage.OK, "This user doesnt exist")).build();
+        }
+        if(!dataAccess.rideExists(rideId))
+        {
+        	return Response.status(404).entity(new ApiResponseMessage(ApiResponseMessage.OK, "This ride doesnt exist")).build();
+        }
     	List<StopWithId> response = dataAccess.getStopsByRideIdAndUserId(rideId, userId);
     	return Response.status(200).entity(response).build();
     }
@@ -62,11 +80,23 @@ public class RideApiServiceImpl extends RideApiService {
     }
     @Override
     public Response updateRide(Integer rideId, RideWithoutId body, SecurityContext securityContext) throws NotFoundException {
+        if(!dataAccess.rideExists(rideId))
+        {
+        	return Response.status(404).entity(new ApiResponseMessage(ApiResponseMessage.OK, "This ride doesnt exist")).build();
+        }
         RideWithId response = dataAccess.updateRide(rideId, body);
         return Response.status(200).entity(response).build();
     }
     @Override
     public Response updateStops(List<StopWithoutId> body, Integer rideId, String userId, SecurityContext securityContext) throws NotFoundException {
+        if(!dataAccess.userExists(userId))
+        {
+        	return Response.status(404).entity(new ApiResponseMessage(ApiResponseMessage.OK, "This user doesnt exist")).build();
+        }
+        if(!dataAccess.rideExists(rideId))
+        {
+        	return Response.status(404).entity(new ApiResponseMessage(ApiResponseMessage.OK, "This ride doesnt exist")).build();
+        }
         StopWithId response = dataAccess.updateStop(rideId, userId, body);
         return Response.status(200).entity(response).build();
     }

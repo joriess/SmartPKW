@@ -283,14 +283,20 @@ public class DataAccess {
 		
 		public CarWithId getCarById(int carId) {
 			try {
-				myRs = myStmt.executeQuery("select * from Stop where carId = "+ carId);			
+				myRs = myStmt.executeQuery("select * from Car where carId = "+ carId);			
 				CarWithId carWithId = new CarWithId();
 				myRs.next();
 				
 				carWithId.setCreatedByUserById(myRs.getString("createdByUserById"));
 				carWithId.setDescription("description");
 				carWithId.setSeats(myRs.getInt("seats"));
-				carWithId.setTrunkspace(enumSwitcherCar(myRs.getString("trunkspace")));
+				if(myRs.getString("trunkspace") != null)
+				{
+					carWithId.setTrunkspace(enumSwitcherCar(myRs.getString("trunkspace")));
+				}
+				else {
+					carWithId.setTrunkspace(null);
+				}
 				
 				return carWithId;
 			} catch (SQLException e) {
@@ -300,6 +306,7 @@ public class DataAccess {
 			}
 		}
 		public List<CarWithId> getCarsByUserId(String userId) {
+			//funktioniert noch nicht, keine Ausgabe
 			try {
 				myRs = myStmt.executeQuery("select * from Stop where createdByUserById = "+ userId);
 				List<CarWithId> carsWithId = new ArrayList<CarWithId>();
@@ -323,7 +330,7 @@ public class DataAccess {
 		}
 		public CarWithId createCar(CarWithoutId carWithoutId) {
 			// the mysql insert statement
-		      String query = " insert into User (createdByUserById, description, seats, trunkspace)"
+		      String query = " insert into Car (createdByUserById, description, seats, trunkspace)"
 		        + " values (?, ?, ?, ?)";
 
 		      // create the mysql insert preparedstatement
@@ -332,10 +339,20 @@ public class DataAccess {
 				  preparedStmt.setString (1, carWithoutId.getCreatedByUserById());
 				  preparedStmt.setString (2, carWithoutId.getDescription());
 				  preparedStmt.setInt   (3, carWithoutId.getSeats());
-				  preparedStmt.setString	(4, carWithoutId.getTrunkspace().toString());
-				  
+				  if(carWithoutId.getTrunkspace() != null)
+				  {
+					  preparedStmt.setString	(4, carWithoutId.getTrunkspace().toString());
+				  }
+				  else {
+					  preparedStmt.setString(4, null);
+				  }
 				  // execute the preparedstatement
 				  preparedStmt.execute();
+				  myRs = myStmt.executeQuery("SELECT LAST_INSERT_ID();");
+				  if(myRs.next())
+				  {
+					  return getCarById(myRs.getInt("LAST_INSERT_ID()"));
+				  }
 				  return null;
 				  
 			} catch (SQLException e) {
@@ -357,13 +374,19 @@ public class DataAccess {
 				  preparedStmt.setString (1, carWithoutId.getCreatedByUserById());
 				  preparedStmt.setString (2, carWithoutId.getDescription());
 				  preparedStmt.setInt   (3, carWithoutId.getSeats());
-				  preparedStmt.setString	(4, carWithoutId.getTrunkspace().toString());
+				  if(carWithoutId.getTrunkspace() != null)
+				  {
+					  preparedStmt.setString	(4, carWithoutId.getTrunkspace().toString());
+				  }
+				  else {
+					  preparedStmt.setString(4, null);
+				  }
 				  
 				  // execute the preparedstatement
 				  preparedStmt.execute();
 				  
 				  // TODO Car wird noch nicht zurück gegeben weil aufwendig, weiß nicht ob das nötig ist.
-				  return null;
+				  return getCarById(carId);
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
