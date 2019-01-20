@@ -153,12 +153,13 @@ public class UserApiServiceImpl extends UserApiService {
     }
     @Override
     public Response updateReview(String userId, Integer reviewId, ReviewWithoutId body, SecurityContext securityContext) throws NotFoundException {
-        ReviewWithId response = dataAccess.updateReview(reviewId, body);
-        if(response != null)
+        if(!dataAccess.reviewExists(reviewId))
         {
-        	return Response.status(200).entity(response).build();
+            return Response.status(404).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "ReviewId not found")).build();
         }
-        return Response.status(404).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "ReviewId not found")).build();
+    	ReviewWithId response = dataAccess.updateReview(reviewId, body);
+    	return Response.status(200).entity(response).build();
+
     }
     @Override
     public Response updateUser(String userId, UserWithoutId body, SecurityContext securityContext) throws NotFoundException {

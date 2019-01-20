@@ -407,7 +407,7 @@ public class DataAccess {
 		public List<ReviewWithId> getReviewsByUserId(String userId) {
 			//Id des Users für den die Reviews gemacht wurden
 			try {
-				myRs = myStmt.executeQuery("select * from Stop where createdByUserById = "+ userId);
+				myRs = myStmt.executeQuery("select * from Review where createdForUserById = "+ userId);
 				List<ReviewWithId> reviewsWithId = new ArrayList<ReviewWithId>();
 				while(myRs.next()) {
 					ReviewWithId reviewWithId = new ReviewWithId();
@@ -432,6 +432,7 @@ public class DataAccess {
 		}
 		public ReviewWithId createReview(ReviewWithoutId reviewWithoutId) {
 			// the mysql insert statement
+			// approved
 		      String query = "INSERT INTO `SmartPKW`.`Review` " +  		
 		      		"(`rating`," + 
 		      		"`comment`," + 
@@ -473,14 +474,13 @@ public class DataAccess {
 		        + " values (?, ?, ?, ?)";*/
 			
 			String query = "UPDATE `SmartPKW`.`Review` " + 
-					"SET" + 
-					"`reviewId` = ?," + 
-					"`rating` = ?," + 
-					"`comment` = ?," + 
-					"`createdByUserById` = ?," + 
-					"`createdForUserById` = ?," + 
-					"`createdOn` = ? WHERE reviewId ="+ reviewId;
-
+					"SET " + 
+					"`rating` = ?, " + 
+					"`comment` = ?, " + 
+					"`createdByUserById` = ?, " + 
+					"`createdForUserById` = ? " + 
+					"WHERE reviewId = "+ reviewId;
+			System.out.println(query);
 		      // create the mysql insert preparedstatement
 		      try {
 		    	  PreparedStatement preparedStmt = myConn.prepareStatement(query);
@@ -488,11 +488,10 @@ public class DataAccess {
 				  preparedStmt.setString (2, reviewWithoutId.getComment());
 				  preparedStmt.setString   (3, reviewWithoutId.getCreatedByUserById());
 				  preparedStmt.setString	(4, reviewWithoutId.getCreatedForUserById());
-				  preparedStmt.setDate(5, (Date) reviewWithoutId.getCreatedOn());
 				  
 				  // execute the preparedstatement
 				  preparedStmt.execute();
-				  
+				  return getReviewById(reviewId);
 				  // TODO Car wird noch nicht zurück gegeben weil aufwendig, weiß nicht ob das nötig ist.
 				  
 			} catch (SQLException e) {
@@ -500,7 +499,7 @@ public class DataAccess {
 				e.printStackTrace();
 				return null;
 			}	
-			return null;
+
 		}
 		public void deleteReview(int reviewId) {
 			try {
@@ -522,19 +521,75 @@ public class DataAccess {
 
 	
 	//--Exists-- Methods
-	public boolean carExists(Integer carId) {
-		// TODO Auto-generated method stub
+	public boolean carExists(int carId) {
+		try {
+			myRs = myStmt.executeQuery("select * from Car where carId = "+ carId);
+			if(myRs.next() == true)
+			{
+				return true;
+			}
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		return false;
 	}
 
-	public boolean reviewExists(Integer reviewId) {
-		// TODO Auto-generated method stub
+	public boolean reviewExists(int reviewId) {
+		try {
+			myRs = myStmt.executeQuery("select * from Review where reviewId = "+ reviewId);
+			if(myRs.next() == true)
+			{
+				return true;
+			}
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		return false;
 	}
 
 	public boolean userExists(String userId) {
 		try {
 			myRs = myStmt.executeQuery("select * from User where userId = "+ userId);
+			if(myRs.next() == true)
+			{
+				return true;
+			}
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return false;
+	}
+	
+	public boolean rideExists(int rideId)
+	{
+		try {
+			myRs = myStmt.executeQuery("select * from Ride where rideId = "+ rideId);
+			if(myRs.next() == true)
+			{
+				return true;
+			}
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return false;
+	}
+	
+	public boolean stopExists(int stopId)
+	{
+		try {
+			myRs = myStmt.executeQuery("select * from Stop where stopId = "+ stopId);
 			if(myRs.next() == true)
 			{
 				return true;
