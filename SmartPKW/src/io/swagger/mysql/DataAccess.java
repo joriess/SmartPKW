@@ -228,16 +228,16 @@ public class DataAccess {
 			List<StopWithId> stopsWithId = new ArrayList<StopWithId>();
 			
 			while(myRs.next()) {	
-				stopWithId.setAddress(myRs.getString("address"));
+				/*stopWithId.setAddress(myRs.getString("address"));
 				stopWithId.setCreatedByUserById(myRs.getString("createdByUserById"));
 				stopWithId.setCreatedForRideById(myRs.getInt("createdForRideById"));
 				//stopWithId.setEndPointForUserById(myRs.getLong("endPointForUserById"));
 				stopWithId.setLatitude(myRs.getInt("latitude"));
 				stopWithId.setRank(myRs.getInt("rank"));
 				//stopWithId.setStartPointForUserById(myRs.getLong("startPointForUserById"));
-				stopWithId.setStatus(enumSwitcherStop(myRs.getString("status")));
+				stopWithId.setStatus(enumSwitcherStop(myRs.getString("status")));*/
 				
-				stopsWithId.add(stopWithId);
+				stopsWithId.add(getStopById(myRs.getInt("stopId")));
 			}
 			return stopsWithId;
 			
@@ -249,21 +249,62 @@ public class DataAccess {
 		
 	}
 	public List<StopWithId> getStopsByRideIdAndUserId(int rideId, String userId) {
-		
-		return null;
+		try {
+			myRs = myStmt.executeQuery("SELECT * FROM Ride, User WHERE Ride.rideId = " +rideId+" AND User.userId = " + userId);
+			List<StopWithId> stopsByRideIdAndUserId = new ArrayList<StopWithId>();
+			
+			while (myRs.next()) {
+				stopsByRideIdAndUserId.add(getStopById(myRs.getInt("stopId")));
+			}
+			return stopsByRideIdAndUserId;
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+
 	}
-	public StopWithId getStopsByUserId(String userId) {
-		return null;
+	public List<StopWithId> getStopsByUserId(String userId) {
+		try {
+			myRs = myStmt.executeQuery("SELECT * FROM Stop WHERE createdByUserById = " + userId);
+			List<StopWithId> stopsByUserId = new ArrayList<StopWithId>();
+			
+			while (myRs.next()) {
+				stopsByUserId.add(getStopById(myRs.getInt("stopId")));
+			}
+			return stopsByUserId;
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
 	}
 	public List<StopWithId> createStops(List<StopWithoutId> stopsWithoutId) {
-		return null;
+		try {
+			//myRs = myStmt.executeQuery("SELECT * FROM Stop WHERE createdByUserById = " + userId);
+			List<StopWithId> createdStops = new ArrayList<StopWithId>();
+			
+			while (myRs.next()) {
+				createdStops.add(getStopById(myRs.getInt("stopId")));
+			}
+			return createdStops;
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
 	}
 	public StopWithId updateStop(int rideId, String userId, List<StopWithoutId> stopsWithoutId) {
 		return null;
 	}
 	public void deleteStops(int rideId, String userId) {
+		
 
 	}
+
 	
 	
 	//--CAR-- Methods ---------------------------------------------------------------------------------------------------------------------
