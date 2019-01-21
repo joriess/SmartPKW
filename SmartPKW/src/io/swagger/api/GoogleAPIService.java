@@ -132,7 +132,9 @@ public class GoogleAPIService {
 		// wenn 2 stops gleichzeitig den höchsten Wert bei der prio haben
 		while(isNotSorted(prioMap) && prioChanged)
 		{
-			//Dann nur vergleichen ob die Stops der höchsten Prio hasPrio übereinander haben, wenn nein ist die Prio Fertig, wenn ja
+			//Dann nur vergleichen ob die Stops der höchsten Prio hasPrio übereinander haben, wenn nein ist die Prio Fertig, wenn ja anpassen und Bedingung noch einmal checken
+			//int liste mit allen stopIds erzeugen, die die höchste Prio haben
+			//if(dataAccess.)
 		}
 		
 	}
@@ -162,6 +164,27 @@ public class GoogleAPIService {
 		else {
 			return false;
 		}
+	}
+	
+	public List<Integer> highestPrios(int[][] prioMap)
+	{
+		List<Integer> stopIds = new List<Integer>;
+		int highest = 0;
+		for(int i = 0; i < prioMap.length; i++)
+		{
+			if(prioMap[i][2] > highest)
+			{
+				highest = prioMap[i][2];
+			}
+		}
+		for(int i = 0; i < prioMap.length; i++)
+		{
+			if(prioMap[i][2] == highest)
+			{
+				//get die stopId und füge der Liste hinzu
+			}
+		}
+		return stopIds;
 	}
 	
 }
