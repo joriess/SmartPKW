@@ -132,7 +132,7 @@ public class UserApiServiceImpl extends UserApiService {
     @Override
     public Response loginUser( @NotNull String userId,  @NotNull String password, SecurityContext securityContext) throws NotFoundException {
         GoogleAPIService googleAPI = GoogleAPIService.getInstance();
-        googleAPI.testConnection();
+        //googleAPI.testConnection();
         //String body = googleAPI.route("Roonstraße 8, 95615 Marktredwitz", "Fliederstraße 14, 92637 Weiden");
         return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "test")).build();
     }

@@ -643,7 +643,7 @@ public class DataAccess {
 			}
 			
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 		
@@ -670,6 +670,16 @@ public class DataAccess {
 	public UserWithId getUserById(String userId) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	public List<StopWithId> getAcceptedStops(int rideId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public boolean hasPrio(int rideId, int i) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }
