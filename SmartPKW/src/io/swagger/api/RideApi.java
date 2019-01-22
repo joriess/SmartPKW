@@ -7,6 +7,7 @@ import io.swagger.api.factories.RideApiServiceFactory;
 import io.swagger.annotations.ApiParam;
 import io.swagger.jaxrs.*;
 
+import java.util.Date;
 import java.util.List;
 import io.swagger.model.RideWithId;
 import io.swagger.model.RideWithoutId;
@@ -303,8 +304,8 @@ public class RideApi  {
         
         @io.swagger.annotations.ApiResponse(code = 503, message = "service or depending services unavailable", response = Void.class) })
     public Response searchRides(@ApiParam(value = "The time until which rides are searched.") @QueryParam("ToAddress") String toAddress
-, @QueryParam("ToAddress") String fromAddress, @ApiParam(value = "The time from which rides are searched.") @QueryParam("fromTimestamp") String fromTimestamp
-,@ApiParam(value = "address of type string") @QueryParam("toTimestamp") String toTimestamp
+, @QueryParam("ToAddress") String fromAddress, @ApiParam(value = "The time from which rides are searched.") @QueryParam("fromTimestamp") Date fromTimestamp
+,@ApiParam(value = "address of type string") @QueryParam("toTimestamp") Date toTimestamp
 ,@Context SecurityContext securityContext)
     throws NotFoundException {
         return delegate.searchRides(fromAddress, toAddress,fromTimestamp,toTimestamp,securityContext);
@@ -380,4 +381,43 @@ public class RideApi  {
     throws NotFoundException {
         return delegate.updateStops(body,rideId,userId,securityContext);
     }
+    
+    @PUT
+    @Path("/{rideId}/stop/{userId}/setAccepted")
+    @Consumes({ "application/json" })
+    @Produces({ "application/json" })
+    public Response acceptStops(
+    		@ApiParam(value = "rideId",required=true) @PathParam("rideId") Integer rideId
+    		,@ApiParam(value = "userId",required=true) @PathParam("userId") String userId
+    		,@Context SecurityContext securityContext)
+    		    throws NotFoundException {
+    		        return delegate.acceptStops(rideId,userId,securityContext);
+    		    }
+    
+    @PUT
+    @Path("/{rideId}/stop/{userId}/setDeclined")
+    @Consumes({ "application/json" })
+    @Produces({ "application/json" })
+    public Response declineStops(
+    		@ApiParam(value = "rideId",required=true) @PathParam("rideId") Integer rideId
+    		,@ApiParam(value = "userId",required=true) @PathParam("userId") String userId
+    		,@Context SecurityContext securityContext)
+    		    throws NotFoundException {
+    		        return delegate.declineStops(rideId,userId,securityContext);
+    		    }
+    
+    @PUT
+    @Path("/{rideId}/stop/{userId}/setAccepted")
+    @Consumes({ "application/json" })
+    @Produces({ "application/json" })
+    public Response addUserToStops(
+    		@ApiParam(value = "rideId",required=true) @PathParam("rideId") Integer rideId
+    		,@ApiParam(value = "userId",required=true) @PathParam("userId") String userId
+    		,@QueryParam("startStopId") Integer startStopId
+    		,@QueryParam("endStopId") Integer endStopId
+    		,@Context SecurityContext securityContext)
+    		    throws NotFoundException {
+    		        return delegate.addUserToStops(rideId,userId, startStopId, endStopId, securityContext);
+    		    }
 }
+

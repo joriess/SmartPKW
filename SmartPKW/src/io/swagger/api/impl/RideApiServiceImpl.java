@@ -4,6 +4,7 @@ import io.swagger.api.*;
 import io.swagger.model.*;
 import io.swagger.mysql.DataAccess;
 
+import java.util.Date;
 import java.util.List;
 import java.util.List;
 import java.io.InputStream;
@@ -74,9 +75,10 @@ public class RideApiServiceImpl extends RideApiService {
     	return Response.status(200).entity(response).build();
     }
     @Override
-    public Response searchRides(String fromAddress, String toAddress,  String fromTimestamp,  String toTimestamp, SecurityContext securityContext) throws NotFoundException {
-    	List<RideWithId> response = dataAccess.searchRides(fromAddress, toAddress, fromTimestamp, toTimestamp);
-    	return Response.status(200).entity(response).build();
+    public Response searchRides(String fromAddress, String toAddress,  Date fromTimestamp,  Date toTimestamp, SecurityContext securityContext) throws NotFoundException {
+    	//List<RideWithId> response = dataAccess.searchRides(fromAddress, toAddress, fromTimestamp, toTimestamp);
+    	//return Response.status(200).entity(response).build();
+    	return null;
     }
     @Override
     public Response updateRide(Integer rideId, RideWithoutId body, SecurityContext securityContext) throws NotFoundException {
@@ -100,4 +102,22 @@ public class RideApiServiceImpl extends RideApiService {
         StopWithId response = dataAccess.updateStop(rideId, userId, body);
         return Response.status(200).entity(response).build();
     }
+	@Override
+	public Response acceptStops(Integer rideId, String userId, SecurityContext securityContext)
+			throws NotFoundException
+	{
+		dataAccess.acceptStops(rideId, userId);
+		return null;
+	}
+	@Override
+	public Response declineStops(Integer rideId, String userId, SecurityContext securityContext) {
+		dataAccess.declinceStops(rideId, userId);
+		return null;
+	}
+	@Override
+	public Response addUserToStops(Integer rideId, String userId, Integer startStopId, Integer endStopId,
+			SecurityContext securityContext) {
+		dataAccess.addUserToStops(rideId, userId, startStopId, endStopId);
+		return null;
+	}
 }

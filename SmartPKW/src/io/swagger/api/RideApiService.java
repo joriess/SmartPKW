@@ -5,6 +5,7 @@ import io.swagger.model.*;
 
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 
+import java.util.Date;
 import java.util.List;
 import io.swagger.model.RideWithId;
 import io.swagger.model.RideWithoutId;
@@ -28,7 +29,11 @@ public abstract class RideApiService {
     public abstract Response getRideByRideId(Integer rideId,SecurityContext securityContext) throws NotFoundException;
     public abstract Response getStopsByRideId(Integer rideId,SecurityContext securityContext) throws NotFoundException;
     public abstract Response getStopsByRideIdAndUserId(Integer rideId,String userId,SecurityContext securityContext) throws NotFoundException;
-    public abstract Response searchRides(String fromAddress, String toAddress, String fromTimestamp, String toTimestamp,SecurityContext securityContext) throws NotFoundException;
+    public abstract Response searchRides(String fromAddress, String toAddress, Date fromTimestamp, Date toTimestamp,SecurityContext securityContext) throws NotFoundException;
     public abstract Response updateRide(Integer rideId,RideWithoutId body,SecurityContext securityContext) throws NotFoundException;
     public abstract Response updateStops(List<StopWithoutId> body,Integer rideId,String userId,SecurityContext securityContext) throws NotFoundException;
+	public abstract Response acceptStops(Integer rideId, String userId, SecurityContext securityContext) throws NotFoundException;
+	public abstract Response declineStops(Integer rideId, String userId, SecurityContext securityContext);
+	public abstract Response addUserToStops(Integer rideId, String userId, Integer startStopId, Integer endStopId,
+			SecurityContext securityContext);
 }

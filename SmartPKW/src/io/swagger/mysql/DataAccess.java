@@ -668,23 +668,38 @@ public class DataAccess {
 	}
 
 	public UserWithId getUserById(String userId) {
-		// TODO Auto-generated method stub
+		// simples getUserById
 		return null;
 	}
 
 	public List<StopWithId> getAcceptedStops(int rideId) {
-		// TODO Auto-generated method stub
+		// Alles Stops eines Rides zurückgeben, die Status accepted haben (evtl auf groß/kleinschreibung achten da ENUM)
 		return null;
 	}
 
-	public boolean hasPrio(int rideId, int i) {
-		// TODO Auto-generated method stub
+	public boolean hasPrio(int rideId, int stopId) {
+		//Prüfen ob bei diesem Stop User einsteigen, die bei einem anderen Stop aussteigen (der nicht der letzte Stop des Rides ist) - Wenn ja dann true sonst false
 		return false;
 	}
 
-	public boolean hasPrioOver(Integer integer, List<Integer> highestPrioIds) {
-		// TODO Auto-generated method stub
+	public boolean hasPrioOver(int stopId, List<Integer> highestPrioIds) {
+		//Prüfen ob bei dem Stop User einsteigen, die bei einem der Stops aus der Liste (die Liste entält StopIds) aussteigen, wenn ja dann true sonst false
 		return false;
+	}
+
+	public void acceptStops(Integer rideId, String userId) {
+		//Alle Stops die der User in dem Ride angelegt hat auf accepter setzten (Enum), zuerst alle Stops wo RideID passt und createdByuSerById passt -> setStatus -> dann UPDATE
+		
+	}
+
+	public void declinceStops(Integer rideId, String userId) {
+		//gleiche wie Accept nur das der Status auf declined gesetzt wird
+		
+	}
+
+	public void addUserToStops(Integer rideId, String userId, Integer startStopId, Integer endStopId) {
+		//Der User wird beim Stop mit der Id startStopId als einsteiger und endStopID als Aussteiger eingetragen
+		
 	}
 
 }
