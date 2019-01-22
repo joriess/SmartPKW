@@ -1,6 +1,7 @@
 package io.swagger.api;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.GET;
@@ -110,7 +111,7 @@ public class GoogleAPIService {
 	public void optimizeRide(int rideId)
 	{	
 		Boolean prioChanged = true; //Prüfvariable ob sich noch Prioritäten ändern (um endlossschleifen zu vermeiden wenn zwei Stops zusammen auf der höchsten Prio sind aber keine Beziehun zu einander haben)
-		List<StopWithId> stops = dataAccess.getAcceptedStops(rideId);
+		List<StopWithId> stops = dataAccess.getAcceptedStops(rideId); //Muss die Stops so zurückgeben, dass der Erste vorne und der Letzte hinten ist
 		int size = stops.size();
 		StopWithId start = stops.remove(0);
 		StopWithId end = stops.remove(stops.size()-1);
@@ -125,8 +126,7 @@ public class GoogleAPIService {
 			if(dataAccess.hasPrio(rideId, prioMap[i][1]))//Wenn ja erhöhe eine temporäre variable
 			{
 				prioMap[i][2] = prioMap[i][2] + 1;
-			}
-			
+			}			
 			
 		}
 		// wenn 2 stops gleichzeitig den höchsten Wert bei der prio haben
@@ -134,11 +134,41 @@ public class GoogleAPIService {
 		{
 			//Dann nur vergleichen ob die Stops der höchsten Prio hasPrio übereinander haben, wenn nein ist die Prio Fertig, wenn ja anpassen und Bedingung noch einmal checken
 			//int liste mit allen stopIds erzeugen, die die höchste Prio haben
-			//if(dataAccess.)
+			List<Integer> highestPrioIds;
+			highestPrioIds = highestPrioIds(prioMap);
+			boolean changedThisCycle = false;
+			prioChanged = false;
+			for(int i = 0; i < prioMap.length; i++)
+			{
+				if(highestPrioIds.contains(prioMap[i][1]))
+				{
+					if(dataAccess.hasPrioOver(highestPrioIds.get(i), highestPrioIds))
+					{
+						prioMap[i][2] = prioMap[i][2]+1;
+						changedThisCycle = true;
+					}
+				}
+
+			}
+			if(changedThisCycle == true)
+			{
+				prioChanged = true;
+			}
+		}
+		
+		//Alle möglichen (Start als erstes, Rides mit höherer Prio nicht nach welchen mit niedriegerer, Ende als letztes) Kombinationen herausfinden
+		//Von Stop zu Stop an die Distance Matrix senden und die Summe der Fahrt Dauer für jede Kombination speichern
+		//Dann die kürzeste OPtion nehmen und die Ranks entsprechend anpassen
+		for(int i = 0; i < getPossibleCombinations(prioMap); i++)
+		{
+			//
+			List<Integer> combination = new ArrayList<Integer>();
+			combination.add(start.getStopId());
+			//Herausfinden ob es für die nächsthöchste Prio 
 		}
 		
 	}
-	//ACHTUNG Stops können zeitgleich auf der höchsten Prio sein, Lösung benötigt um in keinen Loop zu kommen
+	//ACHTUNG Stops können zeitgleich auf der höchsten Prio sein, Lösung benötigt um in keinen Loop zu kommen - Done
 	public Boolean isNotSorted(int[][] prioMap)
 	{
 		int highest = 0;
@@ -166,9 +196,9 @@ public class GoogleAPIService {
 		}
 	}
 	
-	public List<Integer> highestPrios(int[][] prioMap)
+	public List<Integer> highestPrioIds(int[][] prioMap)
 	{
-		List<Integer> stopIds = new List<Integer>;
+		List<Integer> stopIds = new ArrayList<Integer>();
 		int highest = 0;
 		for(int i = 0; i < prioMap.length; i++)
 		{
@@ -181,10 +211,47 @@ public class GoogleAPIService {
 		{
 			if(prioMap[i][2] == highest)
 			{
-				//get die stopId und füge der Liste hinzu
+				stopIds.add(prioMap[i][1]);
 			}
 		}
 		return stopIds;
 	}
+	
+	public int getPossibleCombinations(int[][] prioMap)
+	{
+		int counterCombinations = 1;
+		//anzahl möglicher Kombinationen zurückgeben, maximal sind 4 Stops in der prio map (da start und ziel entfernt wurden)
+		//wenn zwei oder mehr rides die gleiche Prio haben können sie vor oder nacheinander kommen, die anzahl möglicher kombinationen ist n! für diese prio
+		for(int i = 0; i < prioMap.length; i++)
+		{
+			int prioOfThisRide = prioMap[i][2];
+			List<Integer> priosThatWereChecked = new ArrayList<Integer>();
+			int counterSamePrio = 1;
+
+			if(priosThatWereChecked.contains(prioOfThisRide) == false)//nur wenn diese prio noch nicht geprüft wurde
+			for(int j = i+1; j < prioMap.length; j++) //Checke alle nachfolgenden
+			{
+				if(prioMap[j][2] == prioOfThisRide)
+				{
+					counterSamePrio++;
+				}
+			}
+			priosThatWereChecked.add(prioOfThisRide);
+			counterSamePrio = factorial(counterSamePrio);
+			counterCombinations = counterCombinations*counterSamePrio;
+		}
+		
+		return counterCombinations;
+	}
+	
+	public static int factorial(int number) {
+        int result = 1;
+
+        for (int factor = 2; factor <= number; factor++) {
+            result *= factor;
+        }
+
+        return result;
+    }
 	
 }

@@ -682,6 +682,11 @@ public class DataAccess {
 		return false;
 	}
 
+	public boolean hasPrioOver(Integer integer, List<Integer> highestPrioIds) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }
 
 
