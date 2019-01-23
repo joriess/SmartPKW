@@ -73,9 +73,14 @@ public class UserApiServiceImpl extends UserApiService {
         {
         	return Response.status(Status.NOT_FOUND).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "This car doesnt exist")).build();
         }
-    	
-    	dataAccess.deleteCar(carId);
-        return Response.status(204).build();
+    	if(dataAccess.deleteCar(carId))
+    	{
+    		return Response.status(204).build();
+    	}
+    	else {
+    		return Response.status(Status.CONFLICT).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "This car is being referred to in another object(ride) and cant be deleted")).build();
+    	}
+        
     }
     
     @Override
@@ -84,8 +89,13 @@ public class UserApiServiceImpl extends UserApiService {
         {
         	return Response.status(Status.NOT_FOUND).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "This review doesnt exist")).build();
         }
-        dataAccess.deleteReview(reviewId);
-        return Response.status(204).build();
+    	if(dataAccess.deleteReview(reviewId))
+    	{
+    		return Response.status(204).build();
+    	}
+    	else {
+    		return Response.status(Status.CONFLICT).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "This review is being referred to in another object and cant be deleted")).build();
+    	}
     }
     
     @Override

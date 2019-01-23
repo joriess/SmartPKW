@@ -6,12 +6,13 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.swagger.api.GoogleAPIService;
 import io.swagger.model.*;
 
 public class DataAccess {
 	
 	private static DataAccess instance = null;
-	
+	GoogleAPIService googleApiService;
 	//Database Variables
 	private Statement myStmt;
 	private ResultSet myRs;
@@ -43,6 +44,7 @@ public class DataAccess {
 		String url = "jdbc:mysql://localhost:3306/SmartPKW";
 		String username = "root";
 		String password = "";
+		googleApiService = GoogleAPIService.getInstance();
 		
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver");
@@ -150,12 +152,14 @@ public class DataAccess {
 		return null;
 		
 	}
-	public void deleteRide(int rideId) {
+	public boolean deleteRide(int rideId) {
 		try {
 			myStmt.executeUpdate("DELETE FROM Ride WHERE rideId = "+rideId);
+			return true;
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return false;
 		}
 		
 	}
@@ -303,6 +307,8 @@ public class DataAccess {
 			//myRs = myStmt.executeQuery("SELECT * FROM Stop WHERE createdByUserById = " + userId);
 			List<StopWithId> createdStops = new ArrayList<StopWithId>();
 			for(StopWithoutId stop:stopsWithoutId) {
+				String latlng = googleApiService.geocode(stop.getAddress());
+				System.out.println(latlng);
 				String query = "INSERT INTO `SmartPKW`.`Stop`" + 
 						"(`rank`," + 
 						"`createdByUserById`," + 
@@ -504,12 +510,14 @@ public class DataAccess {
 			}	
 		 }
 		
-		public void deleteCar(int carId) {
+		public boolean deleteCar(int carId) {
 			try {
 				myStmt.executeUpdate("DELETE FROM Car WHERE carId = "+carId);
+				return true;
 			} catch (SQLException e) {
 				
 				e.printStackTrace();
+				return false;
 			}
 			
 		}
@@ -635,12 +643,14 @@ public class DataAccess {
 			}	
 
 		}
-		public void deleteReview(int reviewId) {
+		public boolean deleteReview(int reviewId) {
 			try {
 				myStmt.executeUpdate("DELETE FROM Review WHERE reviewId = "+reviewId);
+				return true;
 			} catch (SQLException e) {
 				
 				e.printStackTrace();
+				return false;
 			}
 		}
 
@@ -823,22 +833,12 @@ public class DataAccess {
 		}
 	}
 
-	public boolean hasPrio(int rideId, int stopId) {
-		//Prüfen ob bei diesem Stop User einsteigen, die bei einem anderen Stop aussteigen  - Wenn ja dann true sonst false
-		
-		
-		
-		return false;
-	}
-
 	public boolean hasPrioOver(int stopId, List<Integer> highestPrioIds) {
 		//Prüfen ob bei dem Stop User einsteigen, die bei einem der Stops aus der Liste (die Liste entält StopIds) aussteigen, wenn ja dann true sonst false
 		try {
 			//checken welche User bei dieser stopId einsteigen
 			String query = "SELECT * FROM StartPointForUser WHERE stopId = "+ stopId;
 			List<String> usersToGetIn = new ArrayList<String>();
-			List<String> usersToGetOut = new ArrayList<String>();
-			List<Integer> rideIds = new ArrayList<Integer>();
 			myRs = myStmt.executeQuery(query);
 				//diese user in array stopfen
 			while(myRs.next()) {
@@ -881,7 +881,7 @@ public class DataAccess {
 	public void acceptStops(Integer rideId, String userId) {
 		//Alle Stops die der User in dem Ride angelegt hat auf accepter setzten (Enum), zuerst alle Stops wo RideID passt und createdByuSerById passt -> setStatus -> dann UPDATE
 		try {
-			String query = "UPDATE SmartPKW.Stop SET status = 'ACCEPTED' WHERE createdForRideById = "+rideId+"createdByUserById = "+userId;
+			String query = "UPDATE SmartPKW.Stop SET status = 'ACCEPTED' WHERE createdForRideById = "+rideId+" createdByUserById = "+userId;
 			myStmt.executeUpdate(query);
 			
 		} catch (SQLException e) {
@@ -893,7 +893,7 @@ public class DataAccess {
 	public void declinceStops(Integer rideId, String userId) {
 		//Alle Stops die der User in dem Ride angelegt hat auf accepter setzten (Enum), zuerst alle Stops wo RideID passt und createdByuSerById passt -> setStatus -> dann UPDATE
 				try {
-					String query = "UPDATE SmartPKW.Stop SET status = 'DECLINED' WHERE createdForRideById = "+rideId+"createdByUserById = "+userId;
+					String query = "UPDATE SmartPKW.Stop SET status = 'DECLINED' WHERE createdForRideById = "+rideId+" createdByUserById = "+userId;
 					myStmt.executeUpdate(query);
 					
 				} catch (SQLException e) {
@@ -927,8 +927,13 @@ public class DataAccess {
 		}
 	}
 
-	public void setRank(Integer integer, int i) {
-		// TODO Auto-generated method stub
+	public void setRank(int stopId, int rank) {
+		try {
+			myStmt.executeUpdate("UPDATE Stop SET rank = " + rank + " WHERE stopId = " + stopId);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 	}
 

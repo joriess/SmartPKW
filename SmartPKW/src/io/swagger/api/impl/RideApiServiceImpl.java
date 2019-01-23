@@ -19,6 +19,7 @@ import javax.validation.constraints.*;
 public class RideApiServiceImpl extends RideApiService {
 	
 	DataAccess dataAccess = DataAccess.getInstance();
+	GoogleAPIService googleApiService = GoogleAPIService.getInstance();
 	
     @Override
     public Response createRide(RideWithoutId body, SecurityContext securityContext) throws NotFoundException {
@@ -37,6 +38,7 @@ public class RideApiServiceImpl extends RideApiService {
     	if(response != null)
     	{
             return Response.status(Status.CREATED).entity(response).build();
+            
     	}
     	else {
     		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "An error occured")).build();
@@ -48,8 +50,13 @@ public class RideApiServiceImpl extends RideApiService {
         {
         	return Response.status(Status.NOT_FOUND).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "This ride doesnt exist")).build();
         }
-        dataAccess.deleteRide(rideId); //404 beachten
-    	return Response.status(204).build();
+    	if(dataAccess.deleteRide(rideId))
+    	{
+    		return Response.status(204).build();
+    	}
+    	else {
+    		return Response.status(Status.CONFLICT).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "This ride is being referred to in another object(stop) and cant be deleted")).build();
+    	}
     }
     @Override
     public Response deleteStops(String userId, Integer rideId, SecurityContext securityContext) throws NotFoundException {

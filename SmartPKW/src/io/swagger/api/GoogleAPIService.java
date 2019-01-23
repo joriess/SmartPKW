@@ -120,13 +120,18 @@ public class GoogleAPIService {
 		StopWithId end = stops.remove(stops.size()-1);
 		//2dimensionales Array um stopId (Spalte 1) mit prio zu verbinden
 		int[][] prioMap = new int[stops.size()][2];
+		List<Integer> allWaypoints = new ArrayList<Integer>();
+		for(int i = 0; i < stops.size(); i++)
+		{
+			allWaypoints.add(stops.get(i).getStopId());
+		}
 		
 		for(int i = 0; i < stops.size(); i++)
 		{
 			prioMap[i][1] = stops.remove(0).getStopId();
 			//prüfe ob user die bei diesem ride einsteigen, bei einem anderen aussteigen (das bedeutet, das dieser vor dem anderen sein muss)
 			
-			if(dataAccess.hasPrio(rideId, prioMap[i][1]))//Wenn ja erhöhe eine temporäre variable
+			if(dataAccess.hasPrioOver(rideId, allWaypoints))//Wenn ja erhöhe eine temporäre variable
 			{
 				prioMap[i][2] = prioMap[i][2] + 1;
 			}			
