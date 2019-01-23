@@ -8,6 +8,8 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -25,7 +27,6 @@ import com.google.maps.model.TravelMode;
 import io.swagger.model.StopWithId;
 import io.swagger.mysql.DataAccess;
 
-@Path("test")
 public class GoogleAPIService {
 	
 	private static GoogleAPIService instance = null;
@@ -70,7 +71,7 @@ public class GoogleAPIService {
 			}
 			Gson gson = new GsonBuilder().setPrettyPrinting().create();
 			context.shutdown();
-			return gson.toJson(results[0].geometry.toString());
+			return gson.toJson(results[0].geometry.location);
 	}
 	
 	public String route(String origin, String destination)
@@ -105,7 +106,8 @@ public class GoogleAPIService {
 		}
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
 		context.shutdown();
-		return gson.toJson(results.rows.toString());
+		System.out.println(gson.toJson(results.rows[0].elements));
+		return "kappa";
 	}
 	
 	public void optimizeRide(int rideId)
@@ -155,6 +157,23 @@ public class GoogleAPIService {
 				prioChanged = true;
 			}
 		}
+		int timeForThisRoute = 0;
+		
+		//prioMap in Liste umwandeln
+		List<Integer> orderedStops = new ArrayList<Integer>();
+		orderedStops.add(start.getStopId());
+		java.util.Arrays.sort(prioMap, java.util.Comparator.comparingInt(a -> a[1]));
+		for(int i = 0; i < prioMap.length; i++)
+		{
+			orderedStops.add(prioMap[i][1]);
+		}
+		orderedStops.add(end.getStopId());
+		//liste durchgehen und je zwei lat/long an distance matrix
+		for(int i = 0; i < orderedStops.size()-1; i++)
+		{
+			
+		}
+		
 		
 		//Alle möglichen (Start als erstes, Rides mit höherer Prio nicht nach welchen mit niedriegerer, Ende als letztes) Kombinationen herausfinden
 		//Von Stop zu Stop an die Distance Matrix senden und die Summe der Fahrt Dauer für jede Kombination speichern
@@ -165,9 +184,57 @@ public class GoogleAPIService {
 			List<Integer> combination = new ArrayList<Integer>();
 			combination.add(start.getStopId());
 			//Herausfinden ob es für die nächsthöchste Prio 
+			
+		}
+		
+	    List<List<Integer>> combinations =  new ArrayList<>();
+		//List<Integer> combination = new ArrayList<Integer>();
+		//combination.add(start.getStopId());
+		int lastPrioChecked = 10;
+		for(int i = 0; i < numberDifferentPrios(prioMap); i++)
+		{
+			List<Integer> nextStopIds = getStopIdsWithNextHighestPrio(prioMap, lastPrioChecked);
+			/*for(int j = 0; j < nextStopIds.size(); j++)
+			{
+				combination.add(nextStopIds.get(j));
+				for(int k = j+1; k < nextStopIds.size(); k++)
+				{
+					
+				}
+			}*/
+			//start an alle vorne anfügen, nachfolgende an alle hinten anfügen, stop ganz am ende
+			//dann index aus der oberen liste mit array gleichsetzen wo zeitwert zwischengespeichert wird
+			List<List<Integer>> combinationsForThisPrio = combinations(nextStopIds, nextStopIds.size());
+			//Die Ridekombinationen dieser Prio so oft hinzufügen, dass sich die maximale Kombinationsanzahl ergibt
+			for(int k = 0; k < (getPossibleCombinations(prioMap)/combinationsForThisPrio.size()); k++)
+			{
+				for(int j = 0; j < combinationsForThisPrio.size(); j++)
+				{
+					combinations.add(combinationsForThisPrio.get(j));//StopIds müssen an die bestehenden Listen hintenangefügt werden
+					combinationsForThisPrio.get(j);
+				}
+			}
+			//Eigentlich müsste man alle Kombinationen einer List<List<List<Integer>>> herausfinden --- 
+			//An jede Liste mit StopIds vorne den Start und hinten as Ende einfügen
+			for(int j = 0; j < combinations.size(); j++)
+			{
+				combinations.get(j).add(0, start.getStopId());
+				combinations.get(j).add(end.getStopId());
+			}
+			//int[] timeForThisRoute = new int[combinations.size()];
+			for(int j = 0; j < combinations.size(); j++)
+			{
+				
+			}
+
 		}
 		
 	}
+	private Integer getHighestPrioId(int[][] prioMap) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	//ACHTUNG Stops können zeitgleich auf der höchsten Prio sein, Lösung benötigt um in keinen Loop zu kommen - Done
 	public Boolean isNotSorted(int[][] prioMap)
 	{
@@ -253,5 +320,80 @@ public class GoogleAPIService {
 
         return result;
     }
+	
+	public List<Integer> getStopIdsWithNextHighestPrio (int[][] prioMap, int lastHighestPrio)
+	{
+		List<Integer> nextPrioStops = new ArrayList<Integer>();
+		int highest = 0;
+		for(int i = 0; i < prioMap.length; i++)
+		{
+			if(prioMap[i][2] > highest && prioMap[i][2] < lastHighestPrio)
+			{
+				highest = prioMap[i][2];
+			}
+		}
+		for(int i = 0; i < prioMap.length; i++)
+		{
+			if(prioMap[i][2] == highest)
+			{
+				nextPrioStops.add(prioMap[i][1]);
+			}
+		}
+		
+		return nextPrioStops;
+		
+	}
+	
+	public int numberDifferentPrios(int[][] prioMap)
+	{
+		int counter = 0;
+		List<Integer> prios = new ArrayList<Integer>();
+		for(int i = 0; i < prioMap.length; i++)
+		{
+			if(!prios.contains(prioMap[i][2]))
+			{
+				prios.add(prioMap[i][2]);
+				counter++;
+			}
+		}
+		return counter;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private static List<List<Integer>> combinations(List<Integer> list, int maxLength) {
+	    return combinations(list, maxLength, new ArrayList(), new ArrayList());
+	  }
+
+	  private static List<List<Integer>> combinations(List<Integer> list, int length, List<Integer> current, List<List<Integer>> result) {
+	    if (length == 0) {
+	      List<List<Integer>> newResult =  new ArrayList<>(result);
+	      newResult.add(current);
+	      printCombinations(newResult);
+	      return newResult;
+	    }
+
+	    List<List<List<Integer>>> res3 = new ArrayList<>();
+	    for (Integer i : list) {
+	      List<Integer> newCurrent = new ArrayList<>(current);
+	      newCurrent.add(i);
+	      res3.add(combinations(list, length - 1, newCurrent, result));
+	    }
+
+	    List<List<Integer>> res2 = new ArrayList<>();
+	    for (List<List<Integer>> lst : res3) {
+	      res2.addAll(lst);
+	    }
+	    return res2;
+	  }
+	  
+	  public static void printCombinations(List<List<Integer>> list) {
+		    for (List<Integer> lst : list) {
+		      String line = "";
+		      for (Integer i : lst) {
+		        line += i;
+		      }
+		      System.out.println(line);
+		    }
+		  }
 	
 }

@@ -407,7 +407,7 @@ public class RideApi  {
     		    }
     
     @PUT
-    @Path("/{rideId}/stop/{userId}/setAccepted")
+    @Path("/{rideId}/stop/{userId}/addUser")
     @Consumes({ "application/json" })
     @Produces({ "application/json" })
     public Response addUserToStops(
