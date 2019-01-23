@@ -13,6 +13,7 @@ import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
+import javax.ws.rs.core.Response.Status;
 import javax.validation.constraints.*;
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2019-01-09T18:17:56.749Z")
 public class RideApiServiceImpl extends RideApiService {
@@ -22,25 +23,46 @@ public class RideApiServiceImpl extends RideApiService {
     @Override
     public Response createRide(RideWithoutId body, SecurityContext securityContext) throws NotFoundException {
         RideWithId response = dataAccess.createRide(body);
-        return Response.status(201).entity(response).build();
+    	if(response != null)
+    	{
+            return Response.status(Status.CREATED).entity(response).build();
+    	}
+    	else {
+    		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "An error occured")).build();
+    	}
     }
     @Override
     public Response createStops(List<StopWithoutId> body, Integer rideId, String userId, SecurityContext securityContext) throws NotFoundException {
         List<StopWithId> response = dataAccess.createStops(body);
-        return Response.status(201).entity(response).build();
+    	if(response != null)
+    	{
+            return Response.status(Status.CREATED).entity(response).build();
+    	}
+    	else {
+    		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "An error occured")).build();
+    	}
     }
     @Override
     public Response deleteRide(Integer rideId, SecurityContext securityContext) throws NotFoundException {
         if(!dataAccess.rideExists(rideId))
         {
-        	return Response.status(404).entity(new ApiResponseMessage(ApiResponseMessage.OK, "This ride doesnt exist")).build();
+        	return Response.status(404).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "This ride doesnt exist")).build();
         }
         dataAccess.deleteRide(rideId); //404 beachten
     	return Response.status(204).build();
     }
     @Override
     public Response deleteStops(String userId, Integer rideId, SecurityContext securityContext) throws NotFoundException {
-        dataAccess.deleteStops(rideId, userId);
+        if(!dataAccess.rideExists(rideId))
+        {
+        	return Response.status(404).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "This ride doesnt exist")).build();
+        }
+        if(!dataAccess.userExists(userId))
+        {
+        	return Response.status(404).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "This user doesnt exist")).build();
+        }
+    	
+    	dataAccess.deleteStops(rideId, userId);
     	return Response.status(204).build();
     }
     @Override

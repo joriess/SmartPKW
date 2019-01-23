@@ -1,6 +1,7 @@
 package io.swagger.mysql;
 
 import java.sql.*;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,16 +20,14 @@ public class DataAccess {
 	//DateHelper
 	String pattern = "yyyy-MM-dd";
 	SimpleDateFormat formatter = new SimpleDateFormat(pattern);
+	java.text.SimpleDateFormat sdf = 
+	new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	DateFormat df=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	
 	//Start
 	private void startDatabase() {
 		System.out.println("Main Class found");
-		DataAccess.getInstance();	
-		
-		
-		
-		
-		
+		DataAccess.getInstance();
 	}
 	
 	//Singleton Pattern
@@ -68,7 +67,7 @@ public class DataAccess {
 	};
 	
 	//M O D E L  M E T H O D S
-	//--RIDE-- Methods
+	//--RIDE-- Methods -------------------------------------------------------------------------------------------------------------
 	
 	public RideWithId.StatusEnum enumSwitcher (String enumString) {
 		switch (enumString) {
@@ -86,8 +85,8 @@ public class DataAccess {
 	
 	public RideWithId getRideById(int rideId) {
 		try {
-			myRs = myStmt.executeQuery("select * from Ride where rideId = "+rideId);			
 			RideWithId rideWithId = new RideWithId();
+			myRs = myStmt.executeQuery("select * from Ride where rideId = "+rideId);			
 			myRs.next();
 			
 			rideWithId.setCarById(myRs.getInt("carById"));
@@ -103,17 +102,12 @@ public class DataAccess {
 			e.printStackTrace();
 			return null;
 		}
-		
-
-		
 	}
 	
 	public RideWithId createRide (RideWithoutId rideWithoutId) {	
-		// the mysql insert statement
-	      String query = " insert into User (carById, createdByUserById, createdOn, description, status)"
-	        + " values (?, ?, ?, ?, ?)";
-
-	      // create the mysql insert preparedstatement
+		String query = "INSERT INTO Ride "
+	      		+ "(carById, createdByUserById, createdOn, description, status) "
+	      		+ "VALUES (?, ?, ?, ?, ?)";
 	      try {
 			PreparedStatement preparedStmt = myConn.prepareStatement(query);
 			  preparedStmt.setInt (1, rideWithoutId.getCarById());
@@ -124,18 +118,19 @@ public class DataAccess {
 			  
 			  // execute the preparedstatement
 			  preparedStmt.execute();
+			  myRs = myStmt.executeQuery("SELECT LAST_INSERT_ID()");
+			  myRs.next();
+			  return getRideById(myRs.getInt("LAST_INSERT_ID()"));  
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return null;
 		}
-		return null;
-		
 	}
 	
 	public RideWithId updateRide(int rideId, RideWithoutId rideWithoutId) {
 		// the mysql insert statement
-	      String query = " insert into User (carById, createdByUserById, createdOn, description, status)"
-	        + " values (?, ?, ?, ?, ?)";
+	      String query = "UPDATE Ride SET carById = ?, createdByUserById = ?, createdOn = ?, description = ?, status = ? stopWithIdStart = ?, stopWithIdDestination = ? WHERE rideId = "+ rideId;
 
 	      // create the mysql insert preparedstatement
 		try {
@@ -146,8 +141,8 @@ public class DataAccess {
 		      preparedStmt.setString	(4, rideWithoutId.getDescription());
 		      preparedStmt.setString   (5, rideWithoutId.getStatus().toString());
 		      
-		      // execute the preparedstatement
-		      preparedStmt.execute();
+		      // execute the preparedstatementt
+		      //preparedStmt.execute();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -165,26 +160,45 @@ public class DataAccess {
 		
 	}
 	public List<RideWithId> searchRides(String toAddress, String fromAddress, String startDate, String endDate) {
-
+		List<Integer>designatedRideIds = new ArrayList<Integer>();
+		List<RideWithId> compatibleRidesWithId = new ArrayList<RideWithId>();
 		String mySQLstartDate = formatter.format(startDate);
 		String mySQLendDate = formatter.format(endDate);
+
 		
 		try {
-			myRs = myStmt.executeQuery("select * from Stop where address = "+toAddress+" AND time");
-			// TODO List noch unvollendet
+			//get the RideId for the startpoint
+			String query = "SELECT * FROM Stop"
+					+" WHERE address = "+fromAddress
+					+" AND timeFrameStart = "+ mySQLstartDate
+					+" AND timeFrameEnd = "+mySQLendDate;
 			
+			while(myRs.next()) {
+				//die RideIds, die diesen Stop abfährt
+				designatedRideIds.add(myRs.getInt("rideId"));
+			}
+			
+			//seek the the endpoint with the rideId
+			for(int i=0; i< designatedRideIds.size(); i++) {
+				query = "SELECT * FROM Stop"
+						+" WHERE address = "+ toAddress
+						+" AND createdForRideById = "+ designatedRideIds.get(i);	
+				myRs = myStmt.executeQuery(query);
+				
+				while (myRs.next()) {
+					compatibleRidesWithId.add(getRideById(myRs.getInt("rideId")));
+				}
+			}
+			return compatibleRidesWithId;
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
 		return null;
-		
 	}
 	
 	
-	//--STOP-- Methods
+	//--STOP-- Methods ---------------------------------------------------------------------------------------------------------------------
 	public StopWithId.StatusEnum enumSwitcherStop (String enumString) {
 		switch (enumString) {
 		case "ACCEPTED":
@@ -203,9 +217,12 @@ public class DataAccess {
 			StopWithId stopWithId = new StopWithId();
 			myRs.next();
 			
+			stopWithId.setStopId(stopId);
 			stopWithId.setAddress(myRs.getString("address"));
 			stopWithId.setCreatedByUserById(myRs.getString("createdByUserById"));
 			stopWithId.setCreatedForRideById(myRs.getInt("createdForRideById"));
+			stopWithId.setTimeFrameStart(myRs.getDate("timeFrameStart"));
+			stopWithId.setTimeFrameEnd(myRs.getDate("timeFrameEnd"));
 			//stopWithId.setEndPointForUserById(myRs.getLong("endPointForUserById"));
 			stopWithId.setLatitude(myRs.getInt("latitude"));
 			stopWithId.setRank(myRs.getInt("rank"));
@@ -285,12 +302,65 @@ public class DataAccess {
 		try {
 			//myRs = myStmt.executeQuery("SELECT * FROM Stop WHERE createdByUserById = " + userId);
 			List<StopWithId> createdStops = new ArrayList<StopWithId>();
-			
-			while (myRs.next()) {
-				createdStops.add(getStopById(myRs.getInt("stopId")));
+			for(StopWithoutId stop:stopsWithoutId) {
+				String query = "INSERT INTO `SmartPKW`.`Stop`" + 
+						"(`rank`," + 
+						"`createdByUserById`," + 
+						"`address`," + 
+						"`latitude`," + 
+						"`longitude`," + 
+						"`timeFrameStart`," + 
+						"`timeFrameEnd`," + 
+						"`status`, " + 
+						"`createdForRideById`) " + 
+						"VALUES " + 
+						"(?, ?, ?, ?, ?, ?, ?, ?, ?)";
+				
+				System.out.println("DF.format Date: "+df.format(stop.getTimeFrameEnd()));
+				System.out.println("SQL.Date: "+new java.sql.Date (stop.getTimeFrameStart().getTime()));
+				
+				PreparedStatement preparedStmt = myConn.prepareStatement(query);			
+				preparedStmt.setInt(1, stop.getRank());
+				preparedStmt.setString(2, stop.getCreatedByUserById());
+				preparedStmt.setString(3, stop.getAddress());
+				preparedStmt.setInt(4, stop.getLatitude());
+				preparedStmt.setInt(5, stop.getLongitude());
+				preparedStmt.setDate(6,  new java.sql.Date(stop.getTimeFrameStart().getTime()));
+				preparedStmt.setDate(7, new java.sql.Date(stop.getTimeFrameEnd().getTime()));
+				preparedStmt.setString(8, stop.getStatus().toString());
+				preparedStmt.setInt(9, stop.getCreatedForRideById());
+				
+
+				preparedStmt.execute();
+				
+				myRs = myStmt.executeQuery("SELECT LAST_INSERT_ID()");
+				myRs.next();
+				int lastInsertId = myRs.getInt("LAST_INSERT_ID()");
+				createdStops.add(getStopById(lastInsertId));
+				
+				if (!stop.getStartPointForUserById().isEmpty()) {
+					for (int i=0; i<stop.getStartPointForUserById().size();i++) {
+						query = "INSERT INTO SmartPKW.StartPointForUser (userId, stopId) " + "VALUES (?, ?)";
+						preparedStmt = myConn.prepareStatement(query);
+						preparedStmt.setString(1, stop.getStartPointForUserById().get(i));
+						preparedStmt.setInt(2, lastInsertId);
+						preparedStmt.execute();
+						System.out.println("TAG: if , getStartPointForUserById()"); 
+					}
+				}
+				
+				if (!stop.getEndPointForUserById().isEmpty()) {
+					for (int i = 0; i < stop.getEndPointForUserById().size(); i++) {
+						query = "INSERT INTO SmartPKW.EndPointForUser (userId, stopId) " + "VALUES (?, ?)";
+						preparedStmt = myConn.prepareStatement(query);
+						preparedStmt.setString(1, stop.getEndPointForUserById().get(i));
+						preparedStmt.setInt(2, lastInsertId);
+						preparedStmt.execute();
+					}
+				}
 			}
+				
 			return createdStops;
-			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -298,11 +368,11 @@ public class DataAccess {
 		}
 	}
 	public StopWithId updateStop(int rideId, String userId, List<StopWithoutId> stopsWithoutId) {
+		
 		return null;
 	}
 	public void deleteStops(int rideId, String userId) {
-		
-
+		//noch nicht implementiert
 	}
 
 	
@@ -317,8 +387,9 @@ public class DataAccess {
 				return CarWithId.TrunkspaceEnum.MEDIUM;
 			case "SMALL":
 				return CarWithId.TrunkspaceEnum.SMALL;
+			default:
+				return CarWithId.TrunkspaceEnum.MEDIUM;
 			}
-			return null;
 		}
 		
 		
@@ -328,8 +399,9 @@ public class DataAccess {
 				CarWithId carWithId = new CarWithId();
 				myRs.next();
 				
+				carWithId.setCarId(carId);
 				carWithId.setCreatedByUserById(myRs.getString("createdByUserById"));
-				carWithId.setDescription("description");
+				carWithId.setDescription(myRs.getString("description"));
 				carWithId.setSeats(myRs.getInt("seats"));
 				if(myRs.getString("trunkspace") != null)
 				{
@@ -349,17 +421,13 @@ public class DataAccess {
 		public List<CarWithId> getCarsByUserId(String userId) {
 			//funktioniert noch nicht, keine Ausgabe
 			try {
-				myRs = myStmt.executeQuery("select * from Stop where createdByUserById = "+ userId);
 				List<CarWithId> carsWithId = new ArrayList<CarWithId>();
+				myRs = myStmt.executeQuery("SELECT * FROM Car "
+						+ "WHERE createdByUserById = "+ userId);
+
 				while (myRs.next()) {
 					CarWithId carWithId = new CarWithId();
-
-					carWithId.setCreatedByUserById(myRs.getString("createdByUserById"));
-					carWithId.setDescription("description");
-					carWithId.setSeats(myRs.getInt("seats"));
-					carWithId.setTrunkspace(enumSwitcherCar(myRs.getString("trunkspace")));
-					
-					carsWithId.add(carWithId);
+					carsWithId.add(getCarById(myRs.getInt("carId")));
 				}
 				return carsWithId;
 				
@@ -403,11 +471,12 @@ public class DataAccess {
 			}
 		}
 		public CarWithId updateCar(int carId, CarWithoutId carWithoutId) {
-			// the mysql insert statement
-		     /* String query = "insert into User where cardId = "+carId+"(createdByUserById, description, seats, trunkspace)"
-		        + " values (?, ?, ?, ?)";*/
-			
-			String query = "UPDATE Car SET createdByUserById = ?, description = ?, seats = ?, trunkspace = ? WHERE userId ="+ carId;
+			String query = "UPDATE Car SET "
+						+ "createdByUserById = ?, "
+						+ "description = ?, "
+						+ "seats = ?, "
+						+ "trunkspace = ? "
+						+ "WHERE carId ="+ carId;
 
 		      // create the mysql insert preparedstatement
 		      try {
@@ -422,11 +491,9 @@ public class DataAccess {
 				  else {
 					  preparedStmt.setString(4, null);
 				  }
-				  
 				  // execute the preparedstatement
 				  preparedStmt.execute();
 				  
-				  // TODO Car wird noch nicht zurück gegeben weil aufwendig, weiß nicht ob das nötig ist.
 				  return getCarById(carId);
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -454,6 +521,7 @@ public class DataAccess {
 				ReviewWithId reviewWithId = new ReviewWithId();
 				myRs.next();
 				
+				reviewWithId.setReviewId(reviewId);
 				reviewWithId.setComment(myRs.getString("comment"));
 				reviewWithId.setCreatedByUserById(myRs.getString("createdByUserById"));
 				reviewWithId.setCreatedForUserById(myRs.getString("createdForUserById"));
@@ -476,12 +544,13 @@ public class DataAccess {
 				while(myRs.next()) {
 					ReviewWithId reviewWithId = new ReviewWithId();
 					
-					reviewWithId.setComment(myRs.getString("comment"));
+					reviewWithId = getReviewById(myRs.getInt("reviewId"));
+					/*reviewWithId.setComment(myRs.getString("comment"));
 					reviewWithId.setCreatedByUserById(myRs.getString("createdByUserById"));
 					reviewWithId.setCreatedForUserById(myRs.getString("createdForUserById"));
 					reviewWithId.setCreatedOn(myRs.getDate("createdOn"));
 					reviewWithId.setRating(myRs.getInt("rating"));
-					reviewWithId.setReviewId(myRs.getInt("reviewId"));
+					reviewWithId.setReviewId(myRs.getInt("reviewId"));*/
 					
 					reviewsWithId.add(reviewWithId);
 				}
@@ -501,9 +570,8 @@ public class DataAccess {
 		      		"(`rating`," + 
 		      		"`comment`," + 
 		      		"`createdByUserById`," + 
-		      		"`createdForUserById`," + 
-		      		"`createdOn`)"
-		      		+ " values (?, ?, ?, ?, ?)";
+		      		"`createdForUserById`)"
+		      		+ " values (?, ?, ?, ?)";
 
 		      // create the mysql insert preparedstatement
 		      try {
@@ -513,7 +581,7 @@ public class DataAccess {
 				  preparedStmt.setString (2, reviewWithoutId.getComment());
 				  preparedStmt.setString   (3, reviewWithoutId.getCreatedByUserById());
 				  preparedStmt.setString	(4, reviewWithoutId.getCreatedForUserById());
-				  preparedStmt.setDate(5, (Date) reviewWithoutId.getCreatedOn());
+				  //preparedStmt.setDate(5, new java.sql.Date(reviewWithoutId.getCreatedOn().getTime()));
 				  //createdOn .. automatisch?
 				  //System.out.println(preparedStmt);
 				  // execute the preparedstatement
@@ -577,7 +645,38 @@ public class DataAccess {
 	
 
 	
-	//--User-- Methods
+	//--USER-- Methods ------------------------------------------------------------------------------------------------------------------------------------------------
+	/*public UserWithId createUser (UserWithoutId userWithoutId) {
+		String query = "INSERT INTO `SmartPKW`.`User` " +  		
+	      		"(`userName`," + 
+	      		"`accessToken`," + 
+	      		"`refreshToken`," + 
+	      		" values (?, ?, ?, ?, ?)";
+
+	      // create the mysql insert preparedstatement
+	      try {
+	    	  PreparedStatement preparedStmt = myConn.prepareStatement(query);
+			  preparedStmt.setString (1, userWithoutId.get);
+			  preparedStmt.setString (2, reviewWithoutId.getComment());
+			  preparedStmt.setString   (3, reviewWithoutId.getCreatedByUserById());
+			  //createdOn .. automatisch?
+			  //System.out.println(preparedStmt);
+			  // execute the preparedstatement
+			  preparedStmt.execute();
+			  myRs = myStmt.executeQuery("SELECT LAST_INSERT_ID();");
+			  if(myRs.next())
+			  {
+				  return getReviewById(myRs.getInt("LAST_INSERT_ID()"));
+			  }
+			  return null;
+			  
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+		
+	}*/
 	public UserWithId updateUser(String userId, UserWithoutId userWithoutId)
 	{
 		return null;
@@ -643,7 +742,7 @@ public class DataAccess {
 			}
 			
 		} catch (SQLException e) {
-			
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -666,15 +765,45 @@ public class DataAccess {
 		
 		return false;
 	}
-
+	
+	 // EXTRA FUNKTIONEN --------------------------------------------------------------------------------------------------------------------------------------------
 	public UserWithId getUserById(String userId) {
-		// simples getUserById
-		return null;
+		try {
+			String query = "SELECT * FROM User WHERE userId = "+userId;
+			myRs = myStmt.executeQuery(query);
+			
+			UserWithId userWithId = new UserWithId();
+			
+			userWithId.setUserId(userId);
+			userWithId.setDisplayName(myRs.getString("userName"));
+			return userWithId;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	public List<StopWithId> getAcceptedStops(int rideId) {
-		// Alles Stops eines Rides zurückgeben, die Status accepted haben (evtl auf groß/kleinschreibung achten da ENUM)
-		return null;
+		try {
+			String query = "SELECT * FROM Stop WHERE createdForRideById = "+rideId+" AND status = 'ACCEPTED'";
+			myRs = myStmt.executeQuery(query);
+			List<StopWithId> stopsWithId = new ArrayList<StopWithId>();
+			
+			while(myRs.next()) {
+				StopWithId stopWithId = new StopWithId();
+				
+				stopWithId = getStopById(myRs.getInt("stopId"));
+				stopsWithId.add(stopWithId);
+			}
+			
+			
+			// Alles Stops eines Rides zurückgeben, die Status accepted haben (evtl auf groß/kleinschreibung achten da ENUM)
+			return stopsWithId;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	public boolean hasPrio(int rideId, int stopId) {
@@ -689,20 +818,37 @@ public class DataAccess {
 
 	public void acceptStops(Integer rideId, String userId) {
 		//Alle Stops die der User in dem Ride angelegt hat auf accepter setzten (Enum), zuerst alle Stops wo RideID passt und createdByuSerById passt -> setStatus -> dann UPDATE
+		try {
+			String query = "UPDATE SmartPKW.Stop SET status = 'ACCEPTED' WHERE createdForRideById = "+rideId+"createdByUserById = "+userId;
+			myStmt.executeUpdate(query);
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		
 	}
 
 	public void declinceStops(Integer rideId, String userId) {
+		//Alle Stops die der User in dem Ride angelegt hat auf accepter setzten (Enum), zuerst alle Stops wo RideID passt und createdByuSerById passt -> setStatus -> dann UPDATE
+				try {
+					String query = "UPDATE SmartPKW.Stop SET status = 'DECLINED' WHERE createdForRideById = "+rideId+"createdByUserById = "+userId;
+					myStmt.executeUpdate(query);
+					
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
 		//gleiche wie Accept nur das der Status auf declined gesetzt wird
-		
 	}
 
 	public void addUserToStops(Integer rideId, String userId, Integer startStopId, Integer endStopId) {
-		//Der User wird beim Stop mit der Id startStopId als einsteiger und endStopID als Aussteiger eingetragen
+		//Josua: Der User wird beim Stop mit der Id startStopId als einsteiger und endStopID als Aussteiger eingetragen
+		//Meinst du hier die Tables "StartPointForUser" & "EndPointForUser"? Wenn ja, dann müsste ich die RideId zusätzlich eintragen, 
+		//denn die existiert in den Tables noch nicht!
+	}
+
+	public void setRank(int stopId, int rank) {
+		// TODO Auto-generated method stub
 		
 	}
 
 }
-
-
-

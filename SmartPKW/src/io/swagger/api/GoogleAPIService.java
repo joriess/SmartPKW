@@ -71,6 +71,7 @@ public class GoogleAPIService {
 			}
 			Gson gson = new GsonBuilder().setPrettyPrinting().create();
 			context.shutdown();
+			System.out.println(gson.toJson(results[0].geometry.location));
 			return gson.toJson(results[0].geometry.location);
 	}
 	
@@ -92,13 +93,13 @@ public class GoogleAPIService {
 		return gson.toJson(results.routes.toString());
 	}
 	
-	public String distance(String[] lat, String[] lng)
+	public String distance(String[] origin, String[] destination)
 	{
 		getContext();
 		DistanceMatrix results;
 		try {
 			results = DistanceMatrixApi.getDistanceMatrix(context,
-			    lat, lng)
+			    origin, destination)
 					.await();
 		} catch (ApiException | InterruptedException | IOException e) {
 			results = null;
@@ -106,8 +107,8 @@ public class GoogleAPIService {
 		}
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
 		context.shutdown();
-		System.out.println(gson.toJson(results.rows[0].elements));
-		return "kappa";
+		System.out.println(gson.toJson(results.rows[0].elements[0].duration));
+		return gson.toJson(results.rows[0].elements[0].duration);
 	}
 	
 	public void optimizeRide(int rideId)
@@ -171,10 +172,16 @@ public class GoogleAPIService {
 		//liste durchgehen und je zwei lat/long an distance matrix
 		for(int i = 0; i < orderedStops.size()-1; i++)
 		{
+			String[] origin =  {dataAccess.getStopById(orderedStops.get(i)).getAddress()};
+			String[] destination = {dataAccess.getStopById(orderedStops.get(i+1)).getAddress()};
 			
+			String time = distance(origin, destination);
+			System.out.println(time);
+			
+			dataAccess.setRank(orderedStops.get(i) , i);
 		}
 		
-		
+		/*
 		//Alle möglichen (Start als erstes, Rides mit höherer Prio nicht nach welchen mit niedriegerer, Ende als letztes) Kombinationen herausfinden
 		//Von Stop zu Stop an die Distance Matrix senden und die Summe der Fahrt Dauer für jede Kombination speichern
 		//Dann die kürzeste OPtion nehmen und die Ranks entsprechend anpassen
@@ -201,7 +208,7 @@ public class GoogleAPIService {
 				{
 					
 				}
-			}*/
+			}
 			//start an alle vorne anfügen, nachfolgende an alle hinten anfügen, stop ganz am ende
 			//dann index aus der oberen liste mit array gleichsetzen wo zeitwert zwischengespeichert wird
 			List<List<Integer>> combinationsForThisPrio = combinations(nextStopIds, nextStopIds.size());
@@ -227,7 +234,7 @@ public class GoogleAPIService {
 				
 			}
 
-		}
+		}*/
 		
 	}
 	private Integer getHighestPrioId(int[][] prioMap) {

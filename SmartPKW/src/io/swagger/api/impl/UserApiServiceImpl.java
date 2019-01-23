@@ -31,33 +31,46 @@ public class UserApiServiceImpl extends UserApiService {
     public Response createCar(String userId, CarWithoutId body, SecurityContext securityContext) throws NotFoundException {
         if(!dataAccess.userExists(userId))
         {
-        	return Response.status(Status.NOT_FOUND).entity(new ApiResponseMessage(ApiResponseMessage.OK, "This user doesnt exist")).build();
+        	return Response.status(Status.NOT_FOUND).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "This user doesnt exist")).build();
         }
     	CarWithId response = dataAccess.createCar(body);
-        return Response.status(201).entity(response).build();
+    	if(response != null)
+    	{
+            return Response.status(Status.CREATED).entity(response).build();
+    	}
+    	else {
+    		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "An error occured")).build();
+    	}
+
     }
     
     @Override
     public Response createReview(String userId, ReviewWithoutId body, SecurityContext securityContext) throws NotFoundException {
         if(!dataAccess.userExists(userId))
         {
-        	return Response.status(Status.NOT_FOUND).entity(new ApiResponseMessage(ApiResponseMessage.OK, "This user doesnt exist")).build();
+        	return Response.status(Status.NOT_FOUND).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "This user doesnt exist")).build();
         }
     	ReviewWithId response = dataAccess.createReview(body);
-    	return Response.status(201).entity(response).build();
+    	if(response != null)
+    	{
+            return Response.status(Status.CREATED).entity(response).build();
+    	}
+    	else {
+    		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "An error occured")).build();
+    	}
     }
     
     @Override
     public Response createUser(UserWithoutId body, SecurityContext securityContext) throws NotFoundException {
         // do some magic!
-        return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
+        return Response.status(Status.NOT_IMPLEMENTED).entity(new ApiResponseMessage(ApiResponseMessage.WARNING, "This method isnt implemented yet")).build();
     }
     
     @Override
     public Response deleteCar(String userId, Integer carId, SecurityContext securityContext) throws NotFoundException {
         if(!dataAccess.carExists(carId))
         {
-        	return Response.status(Status.NOT_FOUND).entity(new ApiResponseMessage(ApiResponseMessage.OK, "This car doesnt exist")).build();
+        	return Response.status(Status.NOT_FOUND).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "This car doesnt exist")).build();
         }
     	
     	dataAccess.deleteCar(carId);
@@ -68,7 +81,7 @@ public class UserApiServiceImpl extends UserApiService {
     public Response deleteReview(String userId, Integer reviewId, SecurityContext securityContext) throws NotFoundException {
         if(!dataAccess.reviewExists(reviewId))
         {
-        	return Response.status(Status.NOT_FOUND).entity(new ApiResponseMessage(ApiResponseMessage.OK, "This review doesnt exist")).build();
+        	return Response.status(Status.NOT_FOUND).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "This review doesnt exist")).build();
         }
         dataAccess.deleteReview(reviewId);
         return Response.status(204).build();
@@ -77,7 +90,7 @@ public class UserApiServiceImpl extends UserApiService {
     @Override
     public Response deleteUser(String userId, SecurityContext securityContext) throws NotFoundException {
         // do some magic!
-        return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
+        return Response.status(Status.NOT_IMPLEMENTED).entity(new ApiResponseMessage(ApiResponseMessage.WARNING, "This method isnt implemented yet")).build();
     }
     
     @Override
@@ -87,7 +100,13 @@ public class UserApiServiceImpl extends UserApiService {
         	return Response.status(Status.NOT_FOUND).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "This car doesnt exist")).build();
         }
         CarWithId response = dataAccess.getCarById(carId);
-        return Response.status(200).entity(response).build();
+    	if(response != null)
+    	{
+            return Response.status(Status.CREATED).entity(response).build();
+    	}
+    	else {
+    		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "An error occured")).build();
+    	}
     }
     
     @Override
@@ -97,17 +116,29 @@ public class UserApiServiceImpl extends UserApiService {
         	return Response.status(Status.NOT_FOUND).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "This user doesnt exist")).build();
         }
         List<CarWithId> response = dataAccess.getCarsByUserId(userId);
-        return Response.status(200).entity(response).build();
+    	if(response != null)
+    	{
+            return Response.status(Status.CREATED).entity(response).build();
+    	}
+    	else {
+    		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "An error occured")).build();
+    	}
     }
     
     @Override
     public Response getReviewByReviewId(Integer reviewId, SecurityContext securityContext) throws NotFoundException {
         if(!dataAccess.reviewExists(reviewId))
         {
-        	return Response.status(Status.NOT_FOUND).entity(new ApiResponseMessage(ApiResponseMessage.OK, "This review doesnt exist")).build();
+        	return Response.status(Status.NOT_FOUND).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "This review doesnt exist")).build();
         }
     	ReviewWithId response = dataAccess.getReviewById(reviewId);
-    	return Response.status(200).entity(response).build();
+    	if(response != null)
+    	{
+            return Response.status(Status.CREATED).entity(response).build();
+    	}
+    	else {
+    		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "An error occured")).build();
+    	}
     }
     
     @Override
@@ -148,7 +179,7 @@ public class UserApiServiceImpl extends UserApiService {
         CarWithId response = dataAccess.updateCar(carId, body);
         if(response != null)
         {
-        	return Response.status(200).entity(response).build();
+        	return Response.status(Status.OK).entity(response).build();
         }
         return Response.status(Status.NOT_FOUND).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "CarId not found")).build();
     }
@@ -159,7 +190,13 @@ public class UserApiServiceImpl extends UserApiService {
             return Response.status(Status.NOT_FOUND).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "ReviewId not found")).build();
         }
     	ReviewWithId response = dataAccess.updateReview(reviewId, body);
-    	return Response.status(200).entity(response).build();
+    	if(response != null)
+    	{
+            return Response.status(Status.OK).entity(response).build();
+    	}
+    	else {
+    		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "An error occured")).build();
+    	}
 
     }
     @Override
@@ -167,7 +204,7 @@ public class UserApiServiceImpl extends UserApiService {
         UserWithId response = dataAccess.updateUser(userId, body);
         if(response != null)
         {
-        	return Response.status(200).entity(response).build();
+        	return Response.status(Status.OK).entity(response).build();
         }
         return Response.status(Status.NOT_FOUND).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "UserId not found")).build();
     }
