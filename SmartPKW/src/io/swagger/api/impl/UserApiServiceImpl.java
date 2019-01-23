@@ -18,6 +18,7 @@ import java.io.InputStream;
 
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 
+import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.SecurityContext;
@@ -102,7 +103,9 @@ public class UserApiServiceImpl extends UserApiService {
         CarWithId response = dataAccess.getCarById(carId);
     	if(response != null)
     	{
-            return Response.status(Status.CREATED).entity(response).build();
+    	    CacheControl cc = new CacheControl();
+    	    cc.setMaxAge(86400);
+            return Response.status(Status.OK).entity(response).cacheControl(cc).build();
     	}
     	else {
     		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "An error occured")).build();
@@ -118,7 +121,9 @@ public class UserApiServiceImpl extends UserApiService {
         List<CarWithId> response = dataAccess.getCarsByUserId(userId);
     	if(response != null)
     	{
-            return Response.status(Status.CREATED).entity(response).build();
+    	    CacheControl cc = new CacheControl();
+    	    cc.setMaxAge(86400);
+            return Response.status(Status.OK).entity(response).cacheControl(cc).build();
     	}
     	else {
     		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "An error occured")).build();
@@ -134,7 +139,9 @@ public class UserApiServiceImpl extends UserApiService {
     	ReviewWithId response = dataAccess.getReviewById(reviewId);
     	if(response != null)
     	{
-            return Response.status(Status.CREATED).entity(response).build();
+    	    CacheControl cc = new CacheControl();
+    	    cc.setMaxAge(604800);
+            return Response.status(Status.OK).entity(response).cacheControl(cc).build();
     	}
     	else {
     		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "An error occured")).build();
@@ -145,20 +152,36 @@ public class UserApiServiceImpl extends UserApiService {
     public Response getReviewsByUserId(String userId, SecurityContext securityContext) throws NotFoundException {
         if(!dataAccess.userExists(userId))
         {
-        	return Response.status(Status.NOT_FOUND).entity(new ApiResponseMessage(ApiResponseMessage.OK, "This user doesnt exist")).build();
+        	return Response.status(Status.NOT_FOUND).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "This user doesnt exist")).build();
         }
     	List<ReviewWithId> response = dataAccess.getReviewsByUserId(userId);
-    	return Response.status(200).entity(response).build();
+    	if(response != null)
+    	{
+    	    CacheControl cc = new CacheControl();
+    	    cc.setMaxAge(604800);
+            return Response.status(Status.OK).entity(response).cacheControl(cc).build();
+    	}
+    	else {
+    		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "An error occured")).build();
+    	}
     }
     
     @Override
     public Response getUserById(String userId, SecurityContext securityContext) throws NotFoundException {
         if(!dataAccess.userExists(userId))
         {
-        	return Response.status(Status.NOT_FOUND).entity(new ApiResponseMessage(ApiResponseMessage.OK, "This user doesnt exist")).build();
+        	return Response.status(Status.NOT_FOUND).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "This user doesnt exist")).build();
         }
         UserWithId response = dataAccess.getUserById(userId);
-        return Response.status(Status.NOT_FOUND).entity(response).build();
+    	if(response != null)
+    	{
+    	    CacheControl cc = new CacheControl();
+    	    cc.setMaxAge(86400);
+            return Response.status(Status.OK).entity(response).cacheControl(cc).build();
+    	}
+    	else {
+    		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "An error occured")).build();
+    	}
     }
     
     @Override
@@ -176,12 +199,22 @@ public class UserApiServiceImpl extends UserApiService {
     }
     @Override
     public Response updateCar(String userId, Integer carId, CarWithoutId body, SecurityContext securityContext) throws NotFoundException {
-        CarWithId response = dataAccess.updateCar(carId, body);
-        if(response != null)
+        if(!dataAccess.userExists(userId))
         {
-        	return Response.status(Status.OK).entity(response).build();
+            return Response.status(Status.NOT_FOUND).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "UserId not found")).build();
         }
-        return Response.status(Status.NOT_FOUND).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "CarId not found")).build();
+        if(!dataAccess.carExists(carId))
+        {
+            return Response.status(Status.NOT_FOUND).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "CarId not found")).build();
+        }
+    	CarWithId response = dataAccess.updateCar(carId, body);
+    	if(response != null)
+    	{
+            return Response.status(Status.OK).entity(response).build();
+    	}
+    	else {
+    		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "An error occured")).build();
+    	}
     }
     @Override
     public Response updateReview(String userId, Integer reviewId, ReviewWithoutId body, SecurityContext securityContext) throws NotFoundException {
@@ -201,11 +234,17 @@ public class UserApiServiceImpl extends UserApiService {
     }
     @Override
     public Response updateUser(String userId, UserWithoutId body, SecurityContext securityContext) throws NotFoundException {
-        UserWithId response = dataAccess.updateUser(userId, body);
-        if(response != null)
+        if(!dataAccess.userExists(userId))
         {
-        	return Response.status(Status.OK).entity(response).build();
+            return Response.status(Status.NOT_FOUND).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "UserId not found")).build();
         }
-        return Response.status(Status.NOT_FOUND).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "UserId not found")).build();
+    	UserWithId response = dataAccess.updateUser(userId, body);
+    	if(response != null)
+    	{
+            return Response.status(Status.OK).entity(response).build();
+    	}
+    	else {
+    		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "An error occured")).build();
+    	}
     }
 }

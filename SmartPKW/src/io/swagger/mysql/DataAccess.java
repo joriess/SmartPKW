@@ -395,7 +395,7 @@ public class DataAccess {
 		
 		public CarWithId getCarById(int carId) {
 			try {
-				myRs = myStmt.executeQuery("select * from Car where carId = "+ carId);			
+				myRs = myStmt.executeQuery("SELECT * FROM Car WHERE carId = "+ carId);			
 				CarWithId carWithId = new CarWithId();
 				myRs.next();
 				
@@ -428,7 +428,9 @@ public class DataAccess {
 				while (myRs.next()) {
 					CarWithId carWithId = new CarWithId();
 					carsWithId.add(getCarById(myRs.getInt("carId")));
+					System.out.println("in while Schleife: "+carWithId);
 				}
+				System.out.println(carsWithId);
 				return carsWithId;
 				
 			} catch (SQLException e) {
@@ -767,6 +769,21 @@ public class DataAccess {
 	}
 	
 	 // EXTRA FUNKTIONEN --------------------------------------------------------------------------------------------------------------------------------------------
+	public void createUser(String userId, String userName, String accessToken) {
+		try {
+			String query = "INSERT INTO User (userId, userName, accessToken) VALUES (?, ?, ?)";
+			PreparedStatement preparedStmt = myConn.prepareStatement(query);
+			preparedStmt.setString(1, userId);
+			preparedStmt.setString(2, userName);
+			preparedStmt.setString(3, accessToken);
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
 	public UserWithId getUserById(String userId) {
 		try {
 			String query = "SELECT * FROM User WHERE userId = "+userId;
@@ -807,13 +824,58 @@ public class DataAccess {
 	}
 
 	public boolean hasPrio(int rideId, int stopId) {
-		//Prüfen ob bei diesem Stop User einsteigen, die bei einem anderen Stop aussteigen (der nicht der letzte Stop des Rides ist) - Wenn ja dann true sonst false
+		//Prüfen ob bei diesem Stop User einsteigen, die bei einem anderen Stop aussteigen  - Wenn ja dann true sonst false
+		
+		
+		
 		return false;
 	}
 
 	public boolean hasPrioOver(int stopId, List<Integer> highestPrioIds) {
 		//Prüfen ob bei dem Stop User einsteigen, die bei einem der Stops aus der Liste (die Liste entält StopIds) aussteigen, wenn ja dann true sonst false
-		return false;
+		try {
+			//checken welche User bei dieser stopId einsteigen
+			String query = "SELECT * FROM StartPointForUser WHERE stopId = "+ stopId;
+			List<String> usersToGetIn = new ArrayList<String>();
+			List<String> usersToGetOut = new ArrayList<String>();
+			List<Integer> rideIds = new ArrayList<Integer>();
+			myRs = myStmt.executeQuery(query);
+				//diese user in array stopfen
+			while(myRs.next()) {
+				usersToGetIn.add(myRs.getString("userId"));
+			}
+			
+			//schauen welche stopIds (aus liste) mit EndPointForUser verknüpft sind und dessen UserIds in usersToGetOut speichern
+			for(int i = 0; i<highestPrioIds.size() ;i++) {
+				query = "SELECT * FROM EndPointForUser WHERE stopId = "+ highestPrioIds.get(i);
+				myRs = myStmt.executeQuery(query);
+				while (myRs.next() ) {
+					for (int j =0;j<usersToGetIn.size();j++) {
+						if (myRs.getString("userId") == usersToGetIn.get(j)) {
+							return true;
+						}
+					}
+					
+					
+				}
+				
+			}
+			
+			
+			/*for (String userToGetIn:usersToGetIn) {
+				for(int highestPrioId:highestPrioIds) {
+					if(Integer.parseInt(userToGetIn) == highestPrioId) {
+						return true;
+					}
+				}
+			}*/
+			
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return false; 
 	}
 
 	public void acceptStops(Integer rideId, String userId) {
@@ -844,11 +906,36 @@ public class DataAccess {
 		//Josua: Der User wird beim Stop mit der Id startStopId als einsteiger und endStopID als Aussteiger eingetragen
 		//Meinst du hier die Tables "StartPointForUser" & "EndPointForUser"? Wenn ja, dann müsste ich die RideId zusätzlich eintragen, 
 		//denn die existiert in den Tables noch nicht!
+		
+		try {
+			//startpoint insert
+			String query = "INSERT INTO StartPointForUser (userId, stopId) VALUES (?, ?)";
+			PreparedStatement preparedStmt = myConn.prepareStatement(query);
+			preparedStmt.setString(1, userId);
+			preparedStmt.setInt(2, startStopId);
+			preparedStmt.execute();
+			
+			//endpoint insert
+			query = "INSERT INTO EndPointForUser (userId, stopId) VALUES (?, ?)";
+			preparedStmt = myConn.prepareStatement(query);
+			preparedStmt.setString(1, userId);
+			preparedStmt.setInt(2, endStopId);
+			preparedStmt.execute();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
-	public void setRank(int stopId, int rank) {
+	public void setRank(Integer integer, int i) {
 		// TODO Auto-generated method stub
 		
 	}
 
 }
+
+
+
+
+
+

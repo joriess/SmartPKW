@@ -12,6 +12,8 @@ import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import com.google.api.client.auth.oauth2.AuthorizationCodeFlow;
 import com.google.api.client.auth.oauth2.BearerToken;
@@ -26,17 +28,20 @@ import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.store.FileDataStoreFactory;
 
+import io.swagger.mysql.DataAccess;
+
 
 @Path("/auth")
 @Consumes({ "application/json" })
 @Produces({ "application/json" })
 public class AuthService  {
 	private String REDIRECT_URI = "http://localhost:8080";
+	DataAccess dataAccess = DataAccess.getInstance();
 	//private final String CLIENT_ID = "673894474162-t0udjug4dro0htn3v3vdl0qrhi2fnt1b.apps.googleusercontent.com";
 	//private final String CLIENT_SECRET = "4rBrw6kNdD50gSLRPF6omHjz";
 	
 	@POST
-	public void authUser(@HeaderParam("X-Requested-With") String requestedHeader, String authResult)
+	public Response authUser(@HeaderParam("X-Requested-With") String requestedHeader, String authResult)
 	{	
 		//authcode as param
 		// (Receive authCode via HTTPS POST)
@@ -81,14 +86,6 @@ public class AuthService  {
 		}
 
 		String accessToken = tokenResponse.getAccessToken();
-		System.out.println(accessToken);
-		/* Use access token to call API
-		GoogleCredential credential = new GoogleCredential().setAccessToken(accessToken);
-		Drive drive =
-		    new Drive.Builder(new NetHttpTransport(), JacksonFactory.getDefaultInstance(), credential)
-		        .setApplicationName("Auth Code Exchange Demo")
-		        .build();
-		File file = drive.files().get("appfolder").execute();*/
 		
 		// Get profile info from ID token
 		GoogleIdToken idToken = null;
@@ -100,15 +97,18 @@ public class AuthService  {
 		}
 		GoogleIdToken.Payload payload = idToken.getPayload();
 		String userId = payload.getSubject();  // Use this value as a key to identify a user.
-		System.out.println(userId);
-		String email = payload.getEmail();
-		boolean emailVerified = Boolean.valueOf(payload.getEmailVerified());
+		//String email = payload.getEmail();
+		//boolean emailVerified = Boolean.valueOf(payload.getEmailVerified());
 		String name = (String) payload.get("name");
-		System.out.println(name);
-		String pictureUrl = (String) payload.get("picture");
-		String locale = (String) payload.get("locale");
-		String familyName = (String) payload.get("family_name");
+		//System.out.println(name);
+		//String pictureUrl = (String) payload.get("picture");
+		//String locale = (String) payload.get("locale");
+		//String familyName = (String) payload.get("family_name");
 		String givenName = (String) payload.get("given_name");
+		
+		dataAccess.createUser(userId, givenName, "addTokenHere");
+		
+		return Response.status(Status.OK).entity(dataAccess.getUserById(userId)).build();
 
 	}
 }

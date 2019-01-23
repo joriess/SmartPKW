@@ -46,7 +46,7 @@ public class RideApiServiceImpl extends RideApiService {
     public Response deleteRide(Integer rideId, SecurityContext securityContext) throws NotFoundException {
         if(!dataAccess.rideExists(rideId))
         {
-        	return Response.status(404).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "This ride doesnt exist")).build();
+        	return Response.status(Status.NOT_FOUND).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "This ride doesnt exist")).build();
         }
         dataAccess.deleteRide(rideId); //404 beachten
     	return Response.status(204).build();
@@ -55,11 +55,11 @@ public class RideApiServiceImpl extends RideApiService {
     public Response deleteStops(String userId, Integer rideId, SecurityContext securityContext) throws NotFoundException {
         if(!dataAccess.rideExists(rideId))
         {
-        	return Response.status(404).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "This ride doesnt exist")).build();
+        	return Response.status(Status.NOT_FOUND).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "This ride doesnt exist")).build();
         }
         if(!dataAccess.userExists(userId))
         {
-        	return Response.status(404).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "This user doesnt exist")).build();
+        	return Response.status(Status.NOT_FOUND).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "This user doesnt exist")).build();
         }
     	
     	dataAccess.deleteStops(rideId, userId);
@@ -69,77 +69,77 @@ public class RideApiServiceImpl extends RideApiService {
     public Response getRideByRideId(Integer rideId, SecurityContext securityContext) throws NotFoundException {
         if(!dataAccess.rideExists(rideId))
         {
-        	return Response.status(404).entity(new ApiResponseMessage(ApiResponseMessage.OK, "This ride doesnt exist")).build();
+        	return Response.status(Status.NOT_FOUND).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "This ride doesnt exist")).build();
         }
     	RideWithId response = dataAccess.getRideById(rideId);
-    	return Response.status(200).entity(response).build();
+    	return Response.status(Status.OK).entity(response).build();
     }
     @Override
     public Response getStopsByRideId(Integer rideId, SecurityContext securityContext) throws NotFoundException {
         if(!dataAccess.rideExists(rideId))
         {
-        	return Response.status(404).entity(new ApiResponseMessage(ApiResponseMessage.OK, "This ride doesnt exist")).build();
+        	return Response.status(Status.NOT_FOUND).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "This ride doesnt exist")).build();
         }
     	List<StopWithId> response = dataAccess.getStopsByRideId(rideId);
-    	return Response.status(200).entity(response).build();
+    	return Response.status(Status.OK).entity(response).build();
     }
     @Override
     public Response getStopsByRideIdAndUserId(Integer rideId, String userId, SecurityContext securityContext) throws NotFoundException {
         if(!dataAccess.userExists(userId))
         {
-        	return Response.status(404).entity(new ApiResponseMessage(ApiResponseMessage.OK, "This user doesnt exist")).build();
+        	return Response.status(Status.NOT_FOUND).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "This user doesnt exist")).build();
         }
         if(!dataAccess.rideExists(rideId))
         {
-        	return Response.status(404).entity(new ApiResponseMessage(ApiResponseMessage.OK, "This ride doesnt exist")).build();
+        	return Response.status(Status.NOT_FOUND).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "This ride doesnt exist")).build();
         }
     	List<StopWithId> response = dataAccess.getStopsByRideIdAndUserId(rideId, userId);
-    	return Response.status(200).entity(response).build();
+    	return Response.status(Status.OK).entity(response).build();
     }
     @Override
     public Response searchRides(String fromAddress, String toAddress,  Date fromTimestamp,  Date toTimestamp, SecurityContext securityContext) throws NotFoundException {
     	//List<RideWithId> response = dataAccess.searchRides(fromAddress, toAddress, fromTimestamp, toTimestamp);
-    	//return Response.status(200).entity(response).build();
+    	//return Response.status(Status.OK).entity(response).build();
     	return null;
     }
     @Override
     public Response updateRide(Integer rideId, RideWithoutId body, SecurityContext securityContext) throws NotFoundException {
         if(!dataAccess.rideExists(rideId))
         {
-        	return Response.status(404).entity(new ApiResponseMessage(ApiResponseMessage.OK, "This ride doesnt exist")).build();
+        	return Response.status(Status.NOT_FOUND).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "This ride doesnt exist")).build();
         }
         RideWithId response = dataAccess.updateRide(rideId, body);
-        return Response.status(200).entity(response).build();
+        return Response.status(Status.OK).entity(response).build();
     }
     @Override
     public Response updateStops(List<StopWithoutId> body, Integer rideId, String userId, SecurityContext securityContext) throws NotFoundException {
         if(!dataAccess.userExists(userId))
         {
-        	return Response.status(404).entity(new ApiResponseMessage(ApiResponseMessage.OK, "This user doesnt exist")).build();
+        	return Response.status(Status.NOT_FOUND).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "This user doesnt exist")).build();
         }
         if(!dataAccess.rideExists(rideId))
         {
-        	return Response.status(404).entity(new ApiResponseMessage(ApiResponseMessage.OK, "This ride doesnt exist")).build();
+        	return Response.status(Status.NOT_FOUND).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "This ride doesnt exist")).build();
         }
         StopWithId response = dataAccess.updateStop(rideId, userId, body);
-        return Response.status(200).entity(response).build();
+        return Response.status(Status.OK).entity(response).build();
     }
 	@Override
 	public Response acceptStops(Integer rideId, String userId, SecurityContext securityContext)
 			throws NotFoundException
 	{
 		dataAccess.acceptStops(rideId, userId);
-		return null;
+		return Response.status(Status.OK).entity(new ApiResponseMessage(ApiResponseMessage.OK, "Stops accepted")).build();
 	}
 	@Override
 	public Response declineStops(Integer rideId, String userId, SecurityContext securityContext) {
 		dataAccess.declinceStops(rideId, userId);
-		return null;
+		return Response.status(Status.OK).entity(new ApiResponseMessage(ApiResponseMessage.OK, "Stops declined")).build();
 	}
 	@Override
 	public Response addUserToStops(Integer rideId, String userId, Integer startStopId, Integer endStopId,
 			SecurityContext securityContext) {
 		dataAccess.addUserToStops(rideId, userId, startStopId, endStopId);
-		return null;
+		return Response.status(Status.OK).entity(new ApiResponseMessage(ApiResponseMessage.OK, "User added")).build();
 	}
 }
