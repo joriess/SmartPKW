@@ -60,7 +60,6 @@ public class RideApi  {
    }
 
     @POST
-    
     @Consumes({ "application/json" })
     @Produces({ "application/json" })
     @io.swagger.annotations.ApiOperation(value = "Create a new ride", notes = "", response = RideWithId.class, authorizations = {
@@ -382,7 +381,7 @@ public class RideApi  {
         return delegate.updateStops(body,rideId,userId,securityContext);
     }
     
-    @PUT
+    @POST
     @Path("/{rideId}/stop/{userId}/setAccepted")
     @Consumes({ "application/json" })
     @Produces({ "application/json" })
@@ -394,7 +393,7 @@ public class RideApi  {
     		        return delegate.acceptStops(rideId,userId,securityContext);
     		    }
     
-    @PUT
+    @POST
     @Path("/{rideId}/stop/{userId}/setDeclined")
     @Consumes({ "application/json" })
     @Produces({ "application/json" })
@@ -406,7 +405,7 @@ public class RideApi  {
     		        return delegate.declineStops(rideId,userId,securityContext);
     		    }
     
-    @PUT
+    @POST
     @Path("/{rideId}/stop/{userId}/addUser")
     @Consumes({ "application/json" })
     @Produces({ "application/json" })

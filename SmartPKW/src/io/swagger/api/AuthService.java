@@ -49,6 +49,7 @@ public class AuthService  {
 		System.out.println(authResult);
 		if (requestedHeader == null) {
 		  // Without the `X-Requested-With` header, this request could be forged. Aborts.
+			return Response.status(Status.BAD_REQUEST).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "The request needs a X-Requested-With Header")).build();
 		}
 
 		// Set path to the Web application client_secret_*.json file you downloaded from the

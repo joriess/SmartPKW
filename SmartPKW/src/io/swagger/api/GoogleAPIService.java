@@ -31,11 +31,12 @@ public class GoogleAPIService {
 	
 	private static GoogleAPIService instance = null;
 	private GeoApiContext context = null;
-	private final String API_KEY = "AIzaSyAGk3rOXKAWocXRHGkqynuUVcvX2slmZT8";
+	private final static String API_KEY = "AIzaSyAGk3rOXKAWocXRHGkqynuUVcvX2slmZT8";
 	
-	DataAccess dataAccess = DataAccess.getInstance();
+	DataAccess dataAccess;
 	
-	private GoogleAPIService() {}
+	private GoogleAPIService() {
+		dataAccess = DataAccess.getInstance();	}
 	
 	public static GoogleAPIService getInstance()
 	{
@@ -71,7 +72,7 @@ public class GoogleAPIService {
 			}
 			Gson gson = new GsonBuilder().setPrettyPrinting().create();
 			context.shutdown();
-			System.out.println(gson.toJson(results[0].geometry.location));
+			//System.out.println(gson.toJson(results[0].geometry.location));
 			return gson.toJson(results[0].geometry.location);
 	}
 	
@@ -111,21 +112,21 @@ public class GoogleAPIService {
 		return gson.toJson(results.rows[0].elements[0].duration);
 	}
 	
-	public void optimizeRide(int rideId)
+	public Response optimizeRide(int rideId)
 	{	
 		Boolean prioChanged = true; //Prüfvariable ob sich noch Prioritäten ändern (um endlossschleifen zu vermeiden wenn zwei Stops zusammen auf der höchsten Prio sind aber keine Beziehun zu einander haben)
 		List<StopWithId> stops = dataAccess.getAcceptedStops(rideId); //Muss die Stops so zurückgeben, dass der Erste vorne und der Letzte hinten ist
 		int size = stops.size();
 		StopWithId start = stops.remove(0);
 		StopWithId end = stops.remove(stops.size()-1);
-		//2dimensionales Array um stopId (Spalte 1) mit prio zu verbinden
+		//2dimensionales Array um stopId[][1] mit prio[][2] zu verbinden
 		int[][] prioMap = new int[stops.size()][2];
 		List<Integer> allWaypoints = new ArrayList<Integer>();
 		for(int i = 0; i < stops.size(); i++)
 		{
 			allWaypoints.add(stops.get(i).getStopId());
 		}
-		
+		System.out.println("Bin oben");
 		for(int i = 0; i < stops.size(); i++)
 		{
 			prioMap[i][1] = stops.remove(0).getStopId();
@@ -137,7 +138,7 @@ public class GoogleAPIService {
 			}			
 			
 		}
-		// wenn 2 stops gleichzeitig den höchsten Wert bei der prio haben
+		// wenn 2 stops gleichzeitig den höchsten Wert bei der prio haben, aufjeden Fall aber einmal durchlaufen
 		while(isNotSorted(prioMap) && prioChanged)
 		{
 			//Dann nur vergleichen ob die Stops der höchsten Prio hasPrio übereinander haben, wenn nein ist die Prio Fertig, wenn ja anpassen und Bedingung noch einmal checken
@@ -180,11 +181,12 @@ public class GoogleAPIService {
 			String[] origin =  {dataAccess.getStopById(orderedStops.get(i)).getAddress()};
 			String[] destination = {dataAccess.getStopById(orderedStops.get(i+1)).getAddress()};
 			
-			String time = distance(origin, destination);
-			System.out.println(time);
+			//String time = distance(origin, destination);          Library hat einen Bug
+			//System.out.println(time);
 			
 			dataAccess.setRank(orderedStops.get(i) , i);
 		}
+		return Response.status(Status.OK).entity(new ApiResponseMessage(ApiResponseMessage.OK, "Stops accepted and ride optimized")).build();
 		
 		/*
 		//Alle möglichen (Start als erstes, Rides mit höherer Prio nicht nach welchen mit niedriegerer, Ende als letztes) Kombinationen herausfinden

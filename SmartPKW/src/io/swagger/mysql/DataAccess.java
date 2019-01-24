@@ -1,11 +1,14 @@
 package io.swagger.mysql;
 
 import java.sql.*;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.swagger.api.ApiResponseMessage;
 import io.swagger.api.GoogleAPIService;
 import io.swagger.model.*;
 
@@ -24,12 +27,7 @@ public class DataAccess {
 	java.text.SimpleDateFormat sdf = 
 	new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	DateFormat df=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-	
-	//Start
-	private void startDatabase() {
-		System.out.println("Main Class found");
-		DataAccess.getInstance();
-	}
+
 	
 	//Singleton Pattern
 	public static DataAccess getInstance() {
@@ -44,7 +42,7 @@ public class DataAccess {
 		String url = "jdbc:mysql://localhost:3306/SmartPKW";
 		String username = "root";
 		String password = "";
-		googleApiService = GoogleAPIService.getInstance();
+
 		
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver");
@@ -108,15 +106,14 @@ public class DataAccess {
 	
 	public RideWithId createRide (RideWithoutId rideWithoutId) {	
 		String query = "INSERT INTO Ride "
-	      		+ "(carById, createdByUserById, createdOn, description, status) "
-	      		+ "VALUES (?, ?, ?, ?, ?)";
+	      		+ "(carById, createdByUserById, description, status) "
+	      		+ "VALUES (?, ?, ?, ?)";
 	      try {
 			PreparedStatement preparedStmt = myConn.prepareStatement(query);
 			  preparedStmt.setInt (1, rideWithoutId.getCarById());
 			  preparedStmt.setString (2, rideWithoutId.getCreatedByUserById());
-			  preparedStmt.setDate   (3, (Date) rideWithoutId.getCreatedOn());
-			  preparedStmt.setString	(4, rideWithoutId.getDescription());
-			  preparedStmt.setString   (5, rideWithoutId.getStatus().toString());
+			  preparedStmt.setString	(3, rideWithoutId.getDescription());
+			  preparedStmt.setString   (4, "PLANNING");
 			  
 			  // execute the preparedstatement
 			  preparedStmt.execute();
@@ -143,6 +140,7 @@ public class DataAccess {
 		      preparedStmt.setString	(4, rideWithoutId.getDescription());
 		      preparedStmt.setString   (5, rideWithoutId.getStatus().toString());
 		      
+		      return(getRideById(rideId));
 		      // execute the preparedstatementt
 		      //preparedStmt.execute();
 		} catch (SQLException e) {
@@ -304,37 +302,35 @@ public class DataAccess {
 	}
 	public List<StopWithId> createStops(List<StopWithoutId> stopsWithoutId) {
 		try {
+			//googleApiService = GoogleAPIService.getInstance();
 			//myRs = myStmt.executeQuery("SELECT * FROM Stop WHERE createdByUserById = " + userId);
 			List<StopWithId> createdStops = new ArrayList<StopWithId>();
 			for(StopWithoutId stop:stopsWithoutId) {
-				String latlng = googleApiService.geocode(stop.getAddress());
-				System.out.println(latlng);
+
+				//String latlng = googleApiService.geocode(stop.getAddress());            //library Bug
+				//System.out.println(latlng);
 				String query = "INSERT INTO `SmartPKW`.`Stop`" + 
 						"(`rank`," + 
 						"`createdByUserById`," + 
 						"`address`," + 
-						"`latitude`," + 
-						"`longitude`," + 
 						"`timeFrameStart`," + 
 						"`timeFrameEnd`," + 
 						"`status`, " + 
 						"`createdForRideById`) " + 
 						"VALUES " + 
-						"(?, ?, ?, ?, ?, ?, ?, ?, ?)";
+						"(?, ?, ?, ?, ?, ?, ?)";
 				
 				System.out.println("DF.format Date: "+df.format(stop.getTimeFrameEnd()));
 				System.out.println("SQL.Date: "+new java.sql.Date (stop.getTimeFrameStart().getTime()));
 				
 				PreparedStatement preparedStmt = myConn.prepareStatement(query);			
-				preparedStmt.setInt(1, stop.getRank());
+				preparedStmt.setInt(1, 0);
 				preparedStmt.setString(2, stop.getCreatedByUserById());
 				preparedStmt.setString(3, stop.getAddress());
-				preparedStmt.setInt(4, stop.getLatitude());
-				preparedStmt.setInt(5, stop.getLongitude());
-				preparedStmt.setDate(6,  new java.sql.Date(stop.getTimeFrameStart().getTime()));
-				preparedStmt.setDate(7, new java.sql.Date(stop.getTimeFrameEnd().getTime()));
-				preparedStmt.setString(8, stop.getStatus().toString());
-				preparedStmt.setInt(9, stop.getCreatedForRideById());
+				preparedStmt.setDate(4,  new java.sql.Date(stop.getTimeFrameStart().getTime()));
+				preparedStmt.setDate(5, new java.sql.Date(stop.getTimeFrameEnd().getTime()));
+				preparedStmt.setString(6, "PENDING");
+				preparedStmt.setInt(7, stop.getCreatedForRideById());
 				
 
 				preparedStmt.execute();
@@ -364,8 +360,9 @@ public class DataAccess {
 						preparedStmt.execute();
 					}
 				}
+				System.out.println("Ende Loop");
 			}
-				
+			System.out.print("Bin draußen");	
 			return createdStops;
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -812,6 +809,7 @@ public class DataAccess {
 	}
 
 	public List<StopWithId> getAcceptedStops(int rideId) {
+		//der erste eintrag in der liste (die zurück gegeben wird) muss der stop sein, bei dem der ride veranstalter einsteigt. 
 		try {
 			String query = "SELECT * FROM Stop WHERE createdForRideById = "+rideId+" AND status = 'ACCEPTED'";
 			myRs = myStmt.executeQuery(query);
@@ -824,6 +822,49 @@ public class DataAccess {
 				stopsWithId.add(stopWithId);
 			}
 			
+			//schauen wo der creator seine EntryStops hat
+			String creatorId = getRideById(rideId).getCreatedByUserById();
+			List<Integer>entryStopIds = new ArrayList<Integer>();
+			query = "SELECT * FROM StartPointForUser where userId = " + creatorId;
+			myRs = myStmt.executeQuery(query);
+			
+			while (myRs.next()) {
+				entryStopIds.add(myRs.getInt("stopId"));
+			}
+			
+			//beide listen vergleichen, wenn eine Entry mit einer Stop übereinstimmt, diese nehmen und an erste stelle der Stoplist!!!!
+			
+			for(int i = 0;i<stopsWithId.size();i++) {
+				for(int j = 0; j<entryStopIds.size();j++) {
+					if(stopsWithId.get(i).getStopId() == entryStopIds.get(j)) {
+						
+						stopsWithId.add(0, stopsWithId.get(i));
+						stopsWithId.remove(i+1);
+					}
+				}
+			}
+			
+			// GLEICHES mit EndStop
+			//schauen wo der creator seine EndStops hat
+			List<Integer>endStopIds = new ArrayList<Integer>();
+			query = "SELECT * FROM EndPointForUser where userId = " + creatorId;
+			myRs = myStmt.executeQuery(query);
+			
+			while (myRs.next()) {
+				endStopIds.add(myRs.getInt("stopId"));
+			}
+			
+			//beide listen vergleichen, wenn eine Entry mit einer Stop übereinstimmt, diese nehmen und an erste stelle der Stoplist!!!!
+			
+			for(int i = 0;i<stopsWithId.size();i++) {
+				for(int j = 0; j<endStopIds.size();j++) {
+					if(stopsWithId.get(i).getStopId() == endStopIds.get(j)) {
+						
+						stopsWithId.add(stopsWithId.size()-1, stopsWithId.get(i));
+						stopsWithId.remove(i);
+					}
+				}
+			}
 			
 			// Alles Stops eines Rides zurückgeben, die Status accepted haben (evtl auf groß/kleinschreibung achten da ENUM)
 			return stopsWithId;
@@ -832,6 +873,8 @@ public class DataAccess {
 			return null;
 		}
 	}
+
+
 
 	public boolean hasPrioOver(int stopId, List<Integer> highestPrioIds) {
 		//Prüfen ob bei dem Stop User einsteigen, die bei einem der Stops aus der Liste (die Liste entält StopIds) aussteigen, wenn ja dann true sonst false
@@ -878,22 +921,25 @@ public class DataAccess {
 		return false; 
 	}
 
-	public void acceptStops(Integer rideId, String userId) {
+	public Response acceptStops(Integer rideId, String userId) {
 		//Alle Stops die der User in dem Ride angelegt hat auf accepter setzten (Enum), zuerst alle Stops wo RideID passt und createdByuSerById passt -> setStatus -> dann UPDATE
 		try {
-			String query = "UPDATE SmartPKW.Stop SET status = 'ACCEPTED' WHERE createdForRideById = "+rideId+" createdByUserById = "+userId;
+			String query = "UPDATE SmartPKW.Stop SET status = 'ACCEPTED' WHERE createdForRideById = "+rideId+" AND createdByUserById = "+userId;
 			myStmt.executeUpdate(query);
+			googleApiService = GoogleAPIService.getInstance();
+			return googleApiService.optimizeRide(rideId);
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "An error occured")).build();
 		
 	}
 
 	public void declinceStops(Integer rideId, String userId) {
 		//Alle Stops die der User in dem Ride angelegt hat auf accepter setzten (Enum), zuerst alle Stops wo RideID passt und createdByuSerById passt -> setStatus -> dann UPDATE
 				try {
-					String query = "UPDATE SmartPKW.Stop SET status = 'DECLINED' WHERE createdForRideById = "+rideId+" createdByUserById = "+userId;
+					String query = "UPDATE SmartPKW.Stop SET status = 'DECLINED' WHERE createdForRideById = "+rideId+" AND createdByUserById = "+userId;
 					myStmt.executeUpdate(query);
 					
 				} catch (SQLException e) {

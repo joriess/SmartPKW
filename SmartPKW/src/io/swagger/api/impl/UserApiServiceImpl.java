@@ -63,7 +63,6 @@ public class UserApiServiceImpl extends UserApiService {
     
     @Override
     public Response createUser(UserWithoutId body, SecurityContext securityContext) throws NotFoundException {
-        // do some magic!
         return Response.status(Status.NOT_IMPLEMENTED).entity(new ApiResponseMessage(ApiResponseMessage.WARNING, "This method isnt implemented yet")).build();
     }
     

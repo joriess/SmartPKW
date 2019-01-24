@@ -69,8 +69,7 @@ public class RideApiServiceImpl extends RideApiService {
         	return Response.status(Status.NOT_FOUND).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "This user doesnt exist")).build();
         }
     	
-    	dataAccess.deleteStops(rideId, userId);
-    	return Response.status(204).build();
+        return Response.status(Status.NOT_IMPLEMENTED).entity(new ApiResponseMessage(ApiResponseMessage.WARNING, "This method isnt implemented yet")).build();
     }
     @Override
     public Response getRideByRideId(Integer rideId, SecurityContext securityContext) throws NotFoundException {
@@ -100,14 +99,14 @@ public class RideApiServiceImpl extends RideApiService {
         {
         	return Response.status(Status.NOT_FOUND).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "This ride doesnt exist")).build();
         }
-    	List<StopWithId> response = dataAccess.getStopsByRideIdAndUserId(rideId, userId);
+    	List<StopWithId> response = dataAccess.getStopsByUserId(userId);
     	return Response.status(Status.OK).entity(response).build();
     }
     @Override
     public Response searchRides(String fromAddress, String toAddress,  Date fromTimestamp,  Date toTimestamp, SecurityContext securityContext) throws NotFoundException {
     	//List<RideWithId> response = dataAccess.searchRides(fromAddress, toAddress, fromTimestamp, toTimestamp);
     	//return Response.status(Status.OK).entity(response).build();
-    	return null;
+    	return Response.status(Status.NOT_IMPLEMENTED).entity(new ApiResponseMessage(ApiResponseMessage.WARNING, "This method isnt implemented yet")).build();
     }
     @Override
     public Response updateRide(Integer rideId, RideWithoutId body, SecurityContext securityContext) throws NotFoundException {
@@ -134,18 +133,42 @@ public class RideApiServiceImpl extends RideApiService {
 	@Override
 	public Response acceptStops(Integer rideId, String userId, SecurityContext securityContext)
 			throws NotFoundException
-	{
-		dataAccess.acceptStops(rideId, userId);
-		return Response.status(Status.OK).entity(new ApiResponseMessage(ApiResponseMessage.OK, "Stops accepted")).build();
+	{	
+        if(!dataAccess.rideExists(rideId))
+        {
+        	return Response.status(Status.NOT_FOUND).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "This ride doesnt exist")).build();
+        }
+        if(!dataAccess.userExists(userId))
+        {
+        	return Response.status(Status.NOT_FOUND).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "This user doesnt exist")).build();
+        }
+		return dataAccess.acceptStops(rideId, userId);
+
 	}
 	@Override
 	public Response declineStops(Integer rideId, String userId, SecurityContext securityContext) {
+        if(!dataAccess.rideExists(rideId))
+        {
+        	return Response.status(Status.NOT_FOUND).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "This ride doesnt exist")).build();
+        }
+        if(!dataAccess.userExists(userId))
+        {
+        	return Response.status(Status.NOT_FOUND).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "This user doesnt exist")).build();
+        }
 		dataAccess.declinceStops(rideId, userId);
 		return Response.status(Status.OK).entity(new ApiResponseMessage(ApiResponseMessage.OK, "Stops declined")).build();
 	}
 	@Override
 	public Response addUserToStops(Integer rideId, String userId, Integer startStopId, Integer endStopId,
 			SecurityContext securityContext) {
+        if(!dataAccess.rideExists(rideId))
+        {
+        	return Response.status(Status.NOT_FOUND).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "This ride doesnt exist")).build();
+        }
+        if(!dataAccess.userExists(userId))
+        {
+        	return Response.status(Status.NOT_FOUND).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "This user doesnt exist")).build();
+        }
 		dataAccess.addUserToStops(rideId, userId, startStopId, endStopId);
 		return Response.status(Status.OK).entity(new ApiResponseMessage(ApiResponseMessage.OK, "User added")).build();
 	}
